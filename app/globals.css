@@ -89,3 +89,7 @@
   .text-secondary { color: var(--color-secondary); }
   .bg-secondary   { background-color: var(--color-secondary); }
 }
+
+body {
+  background-color: var(--color-bg-light);
+}

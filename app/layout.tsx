@@ -16,8 +16,8 @@ const lora = Lora({
 });
 
 export const metadata = {
-  title: "Your App",
-  description: "…",
+  title: "Zen Inn Hotel Booking Website",
+  description: "A serene and elegant hotel booking platform built with Next.js and Tailwind CSS.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
