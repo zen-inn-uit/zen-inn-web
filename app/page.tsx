@@ -1,17 +1,63 @@
+import ChatButton from "@/components/ui/chat-button";
+import Navbar from "@/components/ui/navbar";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
    return (
-    <main className="p-6">
-      <h1 className="font-display text-h1 text-brand">Heading One</h1>
-      <h2 className="font-display text-h2 mt-4">Heading Two</h2>
-      <p className="font-body text-body mt-2 text-gray-700">
-        Body text set in Lora Regular 14px with 1.6 line-height.
-      </p>
+    <>
+      <header>
+        <Navbar />
+      </header>
+      <main>
+        <div className="px-6">
+          <h1 className="font-display text-h1 text-brand">Heading One</h1>
+          <h2 className="font-display text-h2 mt-4">Heading Two</h2>
+          <p className="font-body text-body mt-2 text-gray-700">
+            Body text set in Lora Regular 14px with 1.6 line-height.
+          </p>
 
-      <button className="mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-white hover:opacity-90">
-        Primary Button
-      </button>
-    </main>
+          <button className="dark">
+            Primary Button
+          </button>
+
+        </div>
+        
+      </main>
+      <footer id="footer" className="py-12 px-6 mt-20">
+        <div className="">
+          <div>
+            <div className="flex justify-between md:flex-row flex-col">
+              <div className="flex flex-col items-center md:items-start space-y-6">
+                <Image src="/ZenInn.svg" alt="Zen Inn Logo" width={70} height={30} />
+                <p className="text-accent">
+                  Find the true pleasure in life
+                </p>
+              </div>
+              <div className="flex items-center space-x-12">
+                <Link href="/contact" className="text-secondary">Contact</Link>
+                <Link href="/about" className="text-secondary">About us</Link>
+              </div>
+            </div>
+            <div className="border-t-2 border-[var(--color-primary)] mt-10 pt-4 text-center text-accent">
+              <div className="flex justify-end items-center space-x-6 md:space-x-8 mb-24 mt-6">
+                <Link href="https://www.facebook.com">
+                  <Image src="/fb.svg" alt="Facebook" width={10} height={10} />
+                </Link>
+                <Link href="https://www.twitter.com">
+                  <Image src="/x.svg" alt="Twitter" width={20} height={20} />
+                </Link>
+                <Link href="https://www.instagram.com">
+                  <Image src="/ins.svg" alt="Instagram" width={20} height={20} />
+                </Link>
+              </div>
+              <p className="text-secondary">&copy; {new Date().getFullYear()} Zen Inn. Powered by <span className="text-accent">Group 15</span>.<br />All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+        <ChatButton />
+      </footer>
+    </>
+    
   );
 }
