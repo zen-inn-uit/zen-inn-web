@@ -1,5 +1,7 @@
 import ChatButton from "@/components/ui/chat-button";
+import Dashboard from "@/components/ui/dashboard";
 import Navbar from "@/components/ui/navbar";
+import SearchBar from "@/components/ui/search-bar";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,19 +12,8 @@ export default function Home() {
         <Navbar />
       </header>
       <main>
-        <div className="px-6">
-          <h1 className="font-display text-h1 text-brand">Heading One</h1>
-          <h2 className="font-display text-h2 mt-4">Heading Two</h2>
-          <p className="font-body text-body mt-2 text-gray-700">
-            Body text set in Lora Regular 14px with 1.6 line-height.
-          </p>
-
-          <button className="dark">
-            Primary Button
-          </button>
-
-        </div>
-        
+        <Dashboard />
+        <SearchBar />
       </main>
       <footer id="footer" className="py-12 px-6 mt-20">
         <div className="">
