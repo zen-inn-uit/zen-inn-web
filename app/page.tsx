@@ -1,6 +1,7 @@
 import ChatButton from "@/components/ui/chat-button";
 import Dashboard from "@/components/ui/dashboard";
 import Navbar from "@/components/ui/navbar";
+import { OffersSection } from "@/components/ui/offers";
 import SearchBar from "@/components/ui/search-bar";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +15,7 @@ export default function Home() {
       <main>
         <Dashboard />
         <SearchBar />
+        <OffersSection />
       </main>
       <footer id="footer" className="py-12 px-6 mt-20">
         <div className="">
