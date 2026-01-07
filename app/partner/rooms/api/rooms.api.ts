@@ -1,0 +1,98 @@
+import type { RoomDTO } from '../dto/room.dto';
+
+export const roomsApi = {
+  getRooms: async (): Promise<RoomDTO[]> => {
+    // Mock data - replace with actual API call
+    return [
+      {
+        id: '1',
+        name: 'Standard Room',
+        description: 'Comfortable room with all basic amenities and city view. Perfect for business travelers or short stays.',
+        roomType: 'Standard',
+        capacity: 2,
+        price: 1200000,
+        size: '25 m²',
+        bedType: 'King Bed',
+        images: [
+          'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800',
+          'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800',
+          'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800',
+        ],
+        amenities: ['WiFi', 'TV', 'Air Conditioning', 'Mini Bar', 'Work Desk', 'Coffee Machine'],
+        availableCount: 8,
+        totalCount: 10,
+        hotel: { id: '1', name: 'Grand Plaza Hotel' },
+      },
+      {
+        id: '2',
+        name: 'Deluxe Room',
+        description: 'Spacious deluxe room with premium amenities and ocean view. Includes balcony with stunning sea views.',
+        roomType: 'Deluxe',
+        capacity: 2,
+        price: 2100000,
+        size: '35 m²',
+        bedType: 'King Bed',
+        images: [
+          'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800',
+          'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800',
+        ],
+        amenities: ['WiFi', 'Smart TV', 'Air Conditioning', 'Mini Bar', 'Balcony', 'Coffee Maker', 'Room Service', 'Safe'],
+        availableCount: 5,
+        totalCount: 8,
+        hotel: { id: '1', name: 'Grand Plaza Hotel' },
+      },
+      {
+        id: '3',
+        name: 'Suite',
+        description: 'Luxurious suite with separate living area and stunning views. Perfect for extended stays or special occasions.',
+        roomType: 'Suite',
+        capacity: 4,
+        price: 3500000,
+        size: '55 m²',
+        bedType: 'King Bed',
+        images: [
+          'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800',
+          'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800',
+        ],
+        amenities: ['WiFi', 'Smart TV', 'Air Conditioning', 'Mini Bar', 'Balcony', 'Coffee Maker', 'Bathtub', 'Living Room', 'Kitchenette', 'Premium Toiletries'],
+        availableCount: 2,
+        totalCount: 4,
+        hotel: { id: '1', name: 'Grand Plaza Hotel' },
+      },
+      {
+        id: '4',
+        name: 'Family Room',
+        description: 'Perfect for families with connecting rooms and extra space. Includes kids amenities and entertainment.',
+        roomType: 'Family',
+        capacity: 5,
+        price: 2800000,
+        size: '45 m²',
+        bedType: '2 Queen Beds',
+        images: [
+          'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800',
+        ],
+        amenities: ['WiFi', 'TV', 'Air Conditioning', '2 Bathrooms', 'Kitchenette', 'Kids Welcome Kit', 'Board Games'],
+        availableCount: 3,
+        totalCount: 5,
+        hotel: { id: '2', name: 'Riverside Resort' },
+      },
+      {
+        id: '5',
+        name: 'Single Room',
+        description: 'Cozy room perfect for solo travelers. Compact yet comfortable with all essential amenities.',
+        roomType: 'Single',
+        capacity: 1,
+        price: 850000,
+        size: '18 m²',
+        bedType: 'Single Bed',
+        images: [
+          'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800',
+        ],
+        amenities: ['WiFi', 'TV', 'Air Conditioning', 'Work Desk', 'Coffee Machine'],
+        availableCount: 12,
+        totalCount: 15,
+        hotel: { id: '3', name: 'City Center Hotel' },
+      },
+    ];
+  },
+};
