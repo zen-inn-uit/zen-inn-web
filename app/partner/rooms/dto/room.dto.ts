@@ -4,7 +4,6 @@ export interface RoomDTO {
   description: string;
   roomType: string;
   capacity: number;
-  price: number;
   size: string;
   bedType: string;
   images: string[];
@@ -15,4 +14,10 @@ export interface RoomDTO {
     id: string;
     name: string;
   };
+  ratePlans: Array<{
+    id: string;
+    name: string;
+    basePrice: number;
+    rateType?: string;
+  }>;
 }

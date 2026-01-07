@@ -10,7 +10,6 @@ export const roomsApi = {
         description: 'Comfortable room with all basic amenities and city view. Perfect for business travelers or short stays.',
         roomType: 'Standard',
         capacity: 2,
-        price: 1200000,
         size: '25 m²',
         bedType: 'King Bed',
         images: [
@@ -22,6 +21,7 @@ export const roomsApi = {
         availableCount: 8,
         totalCount: 10,
         hotel: { id: '1', name: 'Grand Plaza Hotel' },
+        ratePlans: [{ id: 'rp1', name: 'Tiêu chuẩn', basePrice: 1200000, rateType: 'BAR' }],
       },
       {
         id: '2',
@@ -29,7 +29,6 @@ export const roomsApi = {
         description: 'Spacious deluxe room with premium amenities and ocean view. Includes balcony with stunning sea views.',
         roomType: 'Deluxe',
         capacity: 2,
-        price: 2100000,
         size: '35 m²',
         bedType: 'King Bed',
         images: [
@@ -40,6 +39,7 @@ export const roomsApi = {
         availableCount: 5,
         totalCount: 8,
         hotel: { id: '1', name: 'Grand Plaza Hotel' },
+        ratePlans: [{ id: 'rp2', name: 'Ưu đãi', basePrice: 2100000, rateType: 'BAR' }],
       },
       {
         id: '3',
@@ -47,7 +47,6 @@ export const roomsApi = {
         description: 'Luxurious suite with separate living area and stunning views. Perfect for extended stays or special occasions.',
         roomType: 'Suite',
         capacity: 4,
-        price: 3500000,
         size: '55 m²',
         bedType: 'King Bed',
         images: [
@@ -58,6 +57,7 @@ export const roomsApi = {
         availableCount: 2,
         totalCount: 4,
         hotel: { id: '1', name: 'Grand Plaza Hotel' },
+        ratePlans: [{ id: 'rp3', name: 'Mặc định', basePrice: 3500000, rateType: 'BAR' }],
       },
       {
         id: '4',
@@ -65,7 +65,6 @@ export const roomsApi = {
         description: 'Perfect for families with connecting rooms and extra space. Includes kids amenities and entertainment.',
         roomType: 'Family',
         capacity: 5,
-        price: 2800000,
         size: '45 m²',
         bedType: '2 Queen Beds',
         images: [
@@ -75,6 +74,7 @@ export const roomsApi = {
         availableCount: 3,
         totalCount: 5,
         hotel: { id: '2', name: 'Riverside Resort' },
+        ratePlans: [{ id: 'rp4', name: 'Family Special', basePrice: 2800000, rateType: 'BAR' }],
       },
       {
         id: '5',
@@ -82,7 +82,6 @@ export const roomsApi = {
         description: 'Cozy room perfect for solo travelers. Compact yet comfortable with all essential amenities.',
         roomType: 'Single',
         capacity: 1,
-        price: 850000,
         size: '18 m²',
         bedType: 'Single Bed',
         images: [
@@ -92,6 +91,7 @@ export const roomsApi = {
         availableCount: 12,
         totalCount: 15,
         hotel: { id: '3', name: 'City Center Hotel' },
+        ratePlans: [{ id: 'rp5', name: 'Solo BAR', basePrice: 850000, rateType: 'BAR' }],
       },
     ];
   },

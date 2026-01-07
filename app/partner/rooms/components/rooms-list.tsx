@@ -21,7 +21,7 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
   return (
     <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
       <div className="p-8 pb-4">
-        <h1 className="text-2xl font-bold text-slate-900 mb-6">Rooms</h1>
+        <h1 className="text-2xl font-bold text-slate-900 mb-6">Phòng</h1>
         
         <div className="flex gap-4">
           <div className="flex-1 relative">
@@ -30,23 +30,23 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
             </svg>
             <input
               type="text"
-              placeholder="Search room type, number, etc."
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+              placeholder="Tìm kiếm loại phòng, số phòng..."
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-slate-400 transition-all font-medium"
             />
           </div>
           
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+            className="px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-slate-400 transition-all font-medium"
           >
-            <option>All Room</option>
-            <option>Available</option>
-            <option>Occupied</option>
+            <option value="All Room">Tất cả phòng</option>
+            <option value="Available">Đang trống</option>
+            <option value="Occupied">Đã đặt</option>
           </select>
-
-          <Link href="/partner/rooms/new" className="px-6 py-2.5 bg-brand text-white rounded-lg font-medium text-sm hover:bg-[#6B5B3D] transition-colors inline-block">
-            Add Room
+ 
+          <Link href="/partner/rooms/new" className="px-6 py-2.5 bg-brand text-white rounded-lg font-bold text-sm hover:shadow-lg hover:shadow-brand/20 transition-all inline-block">
+            Thêm phòng mới
           </Link>
         </div>
       </div>
@@ -79,11 +79,11 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
                   <h3 className="font-bold text-slate-900">{room.name}</h3>
                   {room.availableCount > 0 ? (
                     <span className="px-2 py-0.5 bg-lime-100 text-lime-700 text-xs font-medium rounded-full">
-                      Available
+                      Đang trống
                     </span>
                   ) : (
                     <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs font-medium rounded-full">
-                      Occupied
+                      Đã đặt
                     </span>
                   )}
                 </div>
@@ -105,15 +105,17 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    {room.capacity} guests
+                    {room.capacity} khách
                   </span>
                 </div>
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-sm font-semibold text-slate-900">
-                    ${Math.floor(room.price / 23000)}/night
+                    {room.ratePlans?.[0] 
+                      ? `${new Intl.NumberFormat('vi-VN').format(room.ratePlans[0].basePrice)}/đêm`
+                      : 'Liên hệ giá'}
                   </span>
                   <span className="text-xs text-slate-500">
-                    {room.availableCount}/{room.totalCount} available
+                    {room.availableCount}/{room.totalCount} trống
                   </span>
                 </div>
               </div>
@@ -127,11 +129,11 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
             <>
               <div className="p-6 border-b border-slate-200 flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-1">Room Detail</h2>
+                  <h2 className="text-2xl font-bold text-slate-900 mb-1">Chi tiết phòng</h2>
                   <p className="text-sm text-slate-500">{selectedRoom.hotel.name}</p>
                 </div>
-                <button className="px-4 py-2 bg-brand text-white rounded-lg font-medium text-sm hover:bg-[#6B5B3D] transition-colors">
-                  Edit
+                <button className="px-4 py-2 bg-brand text-white rounded-lg font-medium text-sm hover:shadow-lg transition-all">
+                  Chỉnh sửa
                 </button>
               </div>
 
@@ -146,7 +148,7 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
                     ))}
                   </div>
                   <button className="text-sm text-brand hover:text-[#6B5B3D] font-medium">
-                    View all {selectedRoom.images.length} photos
+                    Xem tất cả {selectedRoom.images.length} ảnh
                   </button>
                 </div>
 
@@ -161,20 +163,22 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
                         </span>
                         {selectedRoom.availableCount > 0 ? (
                           <span className="px-2.5 py-1 bg-lime-100 text-lime-700 text-xs font-medium rounded-full">
-                            Available
+                            Đang trống
                           </span>
                         ) : (
                           <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs font-medium rounded-full">
-                            Occupied
+                            Đã đặt
                           </span>
                         )}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-slate-900">
-                        ${Math.floor(selectedRoom.price / 23000)}
-                      </div>
-                      <div className="text-sm text-slate-500">per night</div>
+                    <div className="text-2xl font-bold text-slate-900">
+                      {selectedRoom.ratePlans?.[0]
+                        ? new Intl.NumberFormat('vi-VN').format(selectedRoom.ratePlans[0].basePrice)
+                        : 'N/A'}
+                    </div>
+                    <div className="text-sm text-slate-500">mỗi đêm</div>
                     </div>
                   </div>
                   <p className="text-slate-600 text-sm">{selectedRoom.description}</p>
@@ -182,24 +186,24 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
 
                 {/* Room Details */}
                 <div className="p-6 border-b border-slate-200">
-                  <h4 className="font-semibold text-slate-900 mb-4">Room Details</h4>
+                  <h4 className="font-semibold text-slate-900 mb-4">Thông tin chi tiết</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className="text-xs text-slate-500 mb-1">Size</div>
+                      <div className="text-xs text-slate-500 mb-1">Diện tích</div>
                       <div className="text-sm font-medium text-slate-900">{selectedRoom.size}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-500 mb-1">Bed Type</div>
+                      <div className="text-xs text-slate-500 mb-1">Loại giường</div>
                       <div className="text-sm font-medium text-slate-900">{selectedRoom.bedType}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-500 mb-1">Capacity</div>
-                      <div className="text-sm font-medium text-slate-900">{selectedRoom.capacity} guests</div>
+                      <div className="text-xs text-slate-500 mb-1">Sức chứa</div>
+                      <div className="text-sm font-medium text-slate-900">{selectedRoom.capacity} khách</div>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-500 mb-1">Availability</div>
+                      <div className="text-xs text-slate-500 mb-1">Tình trạng</div>
                       <div className="text-sm font-medium text-slate-900">
-                        {selectedRoom.availableCount}/{selectedRoom.totalCount} rooms
+                        {selectedRoom.availableCount}/{selectedRoom.totalCount} phòng trống
                       </div>
                     </div>
                   </div>
@@ -207,7 +211,7 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
 
                 {/* Amenities */}
                 <div className="p-6 border-b border-slate-200">
-                  <h4 className="font-semibold text-slate-900 mb-4">Amenities & Facilities</h4>
+                  <h4 className="font-semibold text-slate-900 mb-4">Tiện ích & Dịch vụ</h4>
                   <div className="grid grid-cols-2 gap-3">
                     {selectedRoom.amenities.map((amenity, idx) => (
                       <div key={idx} className="flex items-center gap-2 text-sm text-slate-700">
@@ -229,8 +233,8 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1m-6 0h6" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">No room selected</h3>
-                <p className="text-sm text-slate-500">Select a room from the list to view details</p>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Chưa chọn phòng</h3>
+                <p className="text-sm text-slate-500">Chọn một phòng từ danh sách để xem chi tiết</p>
               </div>
             </div>
           )}
