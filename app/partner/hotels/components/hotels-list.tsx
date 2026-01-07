@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { ImageViewer } from '@/components/ui/image-viewer';
 import type { HotelDTO } from '../dto/hotel.dto';
 
 interface HotelsListProps {
@@ -11,6 +12,13 @@ interface HotelsListProps {
 export function HotelsList({ initialHotels }: HotelsListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedHotel, setSelectedHotel] = useState<HotelDTO | null>(null);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const openViewer = (index: number) => {
+    setCurrentImageIndex(index);
+    setViewerOpen(true);
+  };
 
   const filteredHotels = initialHotels.filter(hotel =>
     hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -113,27 +121,48 @@ export function HotelsList({ initialHotels }: HotelsListProps) {
 
               <div className="flex-1 overflow-y-auto">
                 <div className="p-6 space-y-8">
-                  {/* Hero Image */}
-                  <div className="h-64 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-                    {selectedHotel.images?.[0] ? (
-                      <img src={selectedHotel.images[0]} alt={selectedHotel.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-slate-50">
-                        <svg className="w-16 h-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    )}
+                  {/* Images Gallery */}
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-bold text-slate-400 tracking-wider">Hình ảnh khách sạn</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      {selectedHotel.images && selectedHotel.images.length > 0 ? (
+                        selectedHotel.images.slice(0, 4).map((img, idx) => (
+                          <div 
+                            key={idx} 
+                            className={`${idx === 0 && selectedHotel.images!.length > 1 ? 'col-span-2 h-64' : 'h-32'} bg-slate-200 rounded-xl overflow-hidden cursor-pointer hover:opacity-95 transition-all relative group`}
+                            onClick={() => openViewer(idx)}
+                          >
+                            <img src={img} alt={`${selectedHotel.name} ${idx + 1}`} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                              <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                              </svg>
+                            </div>
+                            {idx === 3 && selectedHotel.images!.length > 4 && (
+                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold text-lg">
+                                +{selectedHotel.images!.length - 4}
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="col-span-2 h-48 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
+                          <svg className="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Info Grid */}
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tên khách sạn</h4>
+                      <h4 className="text-xs font-bold text-slate-400 tracking-wider mb-2">Tên khách sạn</h4>
                       <p className="text-slate-900 font-medium">{selectedHotel.name}</p>
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Đánh giá</h4>
+                      <h4 className="text-xs font-bold text-slate-400 tracking-wider mb-2">Đánh giá</h4>
                       <div className="flex items-center gap-1 text-amber-500 font-bold">
                         <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -142,29 +171,29 @@ export function HotelsList({ initialHotels }: HotelsListProps) {
                       </div>
                     </div>
                     <div className="col-span-2">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Địa chỉ</h4>
+                      <h4 className="text-xs font-bold text-slate-400 tracking-wider mb-2">Địa chỉ</h4>
                       <p className="text-slate-900">{selectedHotel.address}, {selectedHotel.city}, {selectedHotel.country}</p>
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Liên hệ</h4>
+                      <h4 className="text-xs font-bold text-slate-400 tracking-wider mb-2">Liên hệ</h4>
                       <p className="text-slate-900 text-sm">{selectedHotel.phone}</p>
                       <p className="text-slate-500 text-xs">{selectedHotel.email}</p>
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Check-in / Check-out</h4>
+                      <h4 className="text-xs font-bold text-slate-400 tracking-wider mb-2">Check-in / Check-out</h4>
                       <p className="text-slate-900 text-sm">{selectedHotel.checkInTime} - {selectedHotel.checkOutTime}</p>
                     </div>
                   </div>
 
                   {/* Description */}
                   <div>
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Mô tả</h4>
+                    <h4 className="text-xs font-bold text-slate-400 tracking-wider mb-2">Mô tả</h4>
                     <p className="text-slate-600 text-sm leading-relaxed">{selectedHotel.description}</p>
                   </div>
 
                   {/* Amenities */}
                   <div>
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Tiện ích</h4>
+                    <h4 className="text-xs font-bold text-slate-400 tracking-wider mb-3">Tiện ích</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedHotel.amenities?.map((amenity, idx) => (
                         <span key={idx} className="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full">
@@ -191,6 +220,16 @@ export function HotelsList({ initialHotels }: HotelsListProps) {
           )}
         </div>
       </div>
+
+      <ImageViewer 
+        isOpen={viewerOpen}
+        onClose={() => setViewerOpen(false)}
+        images={selectedHotel?.images || []}
+        currentIndex={currentImageIndex}
+        onIndexChange={setCurrentImageIndex}
+        title={selectedHotel?.name}
+        description={selectedHotel?.description}
+      />
     </div>
   );
 }

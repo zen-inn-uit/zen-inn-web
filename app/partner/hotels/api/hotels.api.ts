@@ -7,7 +7,7 @@ export const hotelsApi = {
       {
         id: '1',
         name: 'Grand Plaza Hotel',
-        description: 'Luxury 5-star hotel in the heart of the city',
+        description: 'Khách sạn 5 sao sang trọng tọa lạc tại trung tâm thành phố với view toàn cảnh tuyệt đẹp. Grand Plaza mang đến trải nghiệm nghỉ dưỡng đẳng cấp với dịch vụ chuyên nghiệp, hồ bơi vô cực và hệ thống nhà hàng cao cấp.',
         address: '123 Main Street',
         city: 'Ho Chi Minh City',
         country: 'Vietnam',
@@ -17,6 +17,9 @@ export const hotelsApi = {
         rating: 4.8,
         images: [
           'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+          'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800',
+          'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800',
+          'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
         ],
         amenities: ['WiFi', 'Pool', 'Gym', 'Restaurant', 'Spa'],
         checkInTime: '14:00',
@@ -29,7 +32,7 @@ export const hotelsApi = {
       {
         id: '2',
         name: 'Riverside Resort',
-        description: 'Beautiful resort by the river',
+        description: 'Khu nghỉ dưỡng yên bình bên bờ sông với không gian xanh mát và khí hậu trong lành. Riverside Resort là điểm đến lý tưởng cho những ai muốn tìm kiếm sự thư giãn và gần gũi với thiên nhiên.',
         address: '456 River Road',
         city: 'Da Nang',
         country: 'Vietnam',
@@ -38,6 +41,8 @@ export const hotelsApi = {
         rating: 4.5,
         images: [
           'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
+          'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800',
+          'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800',
         ],
         amenities: ['WiFi', 'Pool', 'Beach Access', 'Restaurant'],
         checkInTime: '15:00',
