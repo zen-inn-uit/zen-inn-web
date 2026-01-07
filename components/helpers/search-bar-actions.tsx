@@ -20,7 +20,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { set } from 'date-fns/fp/set';
 
 export default function SearchBarActions({location, dateFrom, dateTo, guests} : {location?: string, dateFrom?: string, dateTo?: string, guests?: string}) {
     const [selectedDateRange, setSelectedDateRange] = useState({
