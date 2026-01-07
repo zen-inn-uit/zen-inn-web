@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ImageViewer } from '@/components/ui/image-viewer';
 import type { RoomDTO } from '../dto/room.dto';
 
 interface RoomsListProps {
@@ -11,12 +13,45 @@ interface RoomsListProps {
 export function RoomsList({ initialRooms }: RoomsListProps) {
   const [filterStatus, setFilterStatus] = useState('All Room');
   const [selectedRoom, setSelectedRoom] = useState<RoomDTO | null>(null);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Prevent scroll when viewer is open
+  useEffect(() => {
+    if (viewerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [viewerOpen]);
+
+  const openViewer = (index: number) => {
+    setCurrentImageIndex(index);
+    setViewerOpen(true);
+  };
 
   const filteredRooms = filterStatus === 'All Room' 
     ? initialRooms 
     : filterStatus === 'Available'
     ? initialRooms.filter(r => r.availableCount > 0)
     : initialRooms.filter(r => r.availableCount === 0);
+
+  const getRoomTypeColor = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'standard':
+        return 'bg-slate-100 text-slate-700';
+      case 'deluxe':
+        return 'bg-amber-100 text-amber-700';
+      case 'suite':
+        return 'bg-indigo-100 text-indigo-700';
+      case 'family':
+        return 'bg-emerald-100 text-emerald-700';
+      case 'single':
+        return 'bg-sky-100 text-sky-700';
+      default:
+        return 'bg-brand/10 text-brand';
+    }
+  };
 
   return (
     <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
@@ -142,12 +177,24 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
                 <div className="p-6 border-b border-slate-200">
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     {selectedRoom.images.map((img, idx) => (
-                      <div key={idx} className={`${idx === 0 ? 'col-span-2 h-64' : 'h-32'} bg-slate-200 rounded-lg overflow-hidden`}>
+                      <div 
+                        key={idx} 
+                        className={`${idx === 0 ? 'col-span-2 h-64' : 'h-32'} bg-slate-200 rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity relative group`}
+                        onClick={() => openViewer(idx)}
+                      >
                         <img src={img} alt={`${selectedRoom.name} ${idx + 1}`} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                          <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                        </div>
                       </div>
                     ))}
                   </div>
-                  <button className="text-sm text-brand hover:text-[#6B5B3D] font-medium">
+                  <button 
+                    onClick={() => openViewer(0)}
+                    className="text-sm text-brand hover:text-[#6B5B3D] font-medium"
+                  >
                     Xem tất cả {selectedRoom.images.length} ảnh
                   </button>
                 </div>
@@ -158,7 +205,7 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
                     <div>
                       <h3 className="text-xl font-bold text-slate-900 mb-1">{selectedRoom.name}</h3>
                       <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-1 bg-[#C9A882] text-[#6B5B3D] text-xs font-medium rounded-full">
+                        <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getRoomTypeColor(selectedRoom.roomType)}`}>
                           {selectedRoom.roomType}
                         </span>
                         {selectedRoom.availableCount > 0 ? (
@@ -173,12 +220,12 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
                       </div>
                     </div>
                     <div className="text-right">
-                    <div className="text-2xl font-bold text-slate-900">
-                      {selectedRoom.ratePlans?.[0]
-                        ? new Intl.NumberFormat('vi-VN').format(selectedRoom.ratePlans[0].basePrice)
-                        : 'N/A'}
-                    </div>
-                    <div className="text-sm text-slate-500">mỗi đêm</div>
+                      <div className="text-2xl font-bold text-slate-900">
+                        {selectedRoom.ratePlans?.[0]
+                          ? new Intl.NumberFormat('vi-VN').format(selectedRoom.ratePlans[0].basePrice)
+                          : 'N/A'}
+                      </div>
+                      <div className="text-sm text-slate-500">mỗi đêm</div>
                     </div>
                   </div>
                   <p className="text-slate-600 text-sm">{selectedRoom.description}</p>
@@ -240,6 +287,16 @@ export function RoomsList({ initialRooms }: RoomsListProps) {
           )}
         </div>
       </div>
+      {/* Standalone Image Viewer Modal */}
+      <ImageViewer 
+        isOpen={viewerOpen}
+        onClose={() => setViewerOpen(false)}
+        images={selectedRoom?.images || []}
+        currentIndex={currentImageIndex}
+        onIndexChange={setCurrentImageIndex}
+        title={selectedRoom?.name}
+        description={selectedRoom?.description}
+      />
     </div>
   );
 }
