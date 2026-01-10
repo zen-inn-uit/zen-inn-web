@@ -131,7 +131,7 @@ export default function SearchPage() {
                 {/* Main content - Two column layout */}
                 <div className="flex flex-col md:flex-row gap-6">
                     {/* Filter sidebar */}
-                    <div className="w-full md:w-80 flex-shrink-0">
+                    <div className="w-full md:w-[320px] flex-shrink-0">
                         {/* Mobile filter toggle button */}
                         <button
                             onClick={() => setShowFilters(!showFilters)}

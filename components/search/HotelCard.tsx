@@ -32,7 +32,7 @@ export default function HotelCard({
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
             <div className="flex flex-col md:flex-row">
                 {/* Image thumbnail */}
-                <div className="relative w-full md:w-64 h-48 md:h-auto flex-shrink-0">
+                <div className="relative w-full md:w-64 h-48 md:h-full min-h-[200px] flex-shrink-0">
                     <Image
                         src={image}
                         alt={name}
