@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import AuthCard from "./AuthCard";
 
 interface PasswordScreenProps {
     title?: string;
@@ -26,7 +27,7 @@ function PasswordForm({
 
     return (
         <>
-            <div className="backdrop-blur-lg bg-white/10 rounded-2xl border border-white/20 shadow-2xl p-8 md:p-10">
+            <AuthCard>
                 {/* Heading */}
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-center" style={{ fontFamily: 'var(--font-display)' }}>
                     {title || "Log in"}
@@ -67,7 +68,7 @@ function PasswordForm({
                                 className="text-accent hover:text-accent/80 text-sm underline transition-colors"
                                 style={{ fontFamily: 'var(--font-body)' }}
                             >
-                                Forgot password?
+                                Forgot your password?
                             </Link>
                         </div>
                     )}
@@ -94,7 +95,7 @@ function PasswordForm({
                         ← Back
                     </button>
                 </div>
-            </div>
+            </AuthCard>
 
             {/* Footer copyright text */}
             <p className="text-white/60 text-sm text-center mt-8" style={{ fontFamily: 'var(--font-body)' }}>
@@ -107,4 +108,3 @@ function PasswordForm({
 export default function PasswordScreen(props: PasswordScreenProps) {
     return <PasswordForm {...props} />;
 }
-

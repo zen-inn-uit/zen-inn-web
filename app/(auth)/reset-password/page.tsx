@@ -1,21 +1,28 @@
 "use client";
 
 import AuthLayout from "@/components/auth/AuthLayout";
+import AuthCard from "@/components/auth/AuthCard";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ResetPasswordPage() {
+    const router = useRouter();
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const email = formData.get("email") as string;
         // UI only - no auth logic needed
         // In a real app, this would call a password reset API
+        router.push(`/reset-password/sent?email=${encodeURIComponent(email)}`);
     };
 
     return (
         <AuthLayout>
-            <div className="backdrop-blur-lg bg-white/10 rounded-2xl border border-white/20 shadow-2xl p-8 md:p-10">
+            <AuthCard>
                 {/* Heading */}
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-center" style={{ fontFamily: 'var(--font-display)' }}>
-                    Reset password
+                    Forgot your password?
                 </h1>
                 
                 {/* Subtitle */}
@@ -48,9 +55,9 @@ export default function ResetPasswordPage() {
                         type="submit"
                         className="w-full py-4 rounded-xl bg-accent text-primary font-bold text-lg hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-transparent transition-all mb-6 shadow-lg"
                         style={{ fontFamily: 'var(--font-display)' }}
-                        aria-label="Send reset link"
+                        aria-label="Send password reset link"
                     >
-                        Send reset link
+                        Send password reset link
                     </button>
                 </form>
 
@@ -64,7 +71,7 @@ export default function ResetPasswordPage() {
                         ← Back to sign in
                     </Link>
                 </div>
-            </div>
+            </AuthCard>
 
             {/* Footer copyright text */}
             <p className="text-white/60 text-sm text-center mt-8" style={{ fontFamily: 'var(--font-body)' }}>
@@ -73,4 +80,3 @@ export default function ResetPasswordPage() {
         </AuthLayout>
     );
 }
-

@@ -3,18 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import AuthCard from "./AuthCard";
 
 interface EmailFirstScreenProps {
-    title?: string;
-    subtitle?: string;
-    buttonText?: string;
     onSubmitAction?: "sign-in" | "sign-up";
 }
 
 export default function EmailFirstScreen({
-    title = "Sign in or create an account!",
-    subtitle = "Welcome to Zen Inn. Enter your email to continue.",
-    buttonText = "Continue with email",
     onSubmitAction = "sign-in"
 }: EmailFirstScreenProps) {
     const router = useRouter();
@@ -32,16 +27,11 @@ export default function EmailFirstScreen({
     };
 
     return (
-        <div className="backdrop-blur-lg bg-white/10 rounded-2xl border border-white/20 shadow-2xl p-8 md:p-10">
+        <AuthCard>
             {/* Heading */}
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-center" style={{ fontFamily: 'var(--font-display)' }}>
-                {title}
+                Sign in or create an account!
             </h1>
-            
-            {/* Subtitle */}
-            <p className="text-secondary text-center mb-8 text-base md:text-lg" style={{ fontFamily: 'var(--font-body)' }}>
-                {subtitle}
-            </p>
 
             {/* Email form */}
             <form onSubmit={handleSubmit}>
@@ -68,9 +58,9 @@ export default function EmailFirstScreen({
                     type="submit"
                     className="w-full py-4 rounded-xl bg-accent text-primary font-bold text-lg hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-transparent transition-all mb-6 shadow-lg"
                     style={{ fontFamily: 'var(--font-display)' }}
-                    aria-label={buttonText}
+                    aria-label="Continue with email"
                 >
-                    {buttonText}
+                    Continue with email
                 </button>
             </form>
 
@@ -141,7 +131,6 @@ export default function EmailFirstScreen({
                 </Link>
                 .
             </p>
-        </div>
+        </AuthCard>
     );
 }
-
