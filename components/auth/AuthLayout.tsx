@@ -12,9 +12,11 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         <div className="min-h-screen relative flex items-center justify-center px-4 py-8">
             {/* Full-screen background image with light gray overlay */}
             <div 
-                className="absolute inset-0 z-0 bg-cover bg-center"
+                className="absolute inset-0 z-0 bg-no-repeat"
                 style={{
                     backgroundImage: "url('/auth-bg.png')",
+                    backgroundSize: '110%',
+                    backgroundPosition: '50% 35%',
                     backgroundColor: "#e5e7eb" // Fallback color if image doesn't exist
                 }}
             >
@@ -22,7 +24,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             </div>
 
             {/* Main content */}
-            <div className="relative z-10 w-full" style={{ maxWidth: '560px' }}>
+            <div className="relative z-10 w-full max-w-[640px] px-4">
                 {children}
             </div>
 
