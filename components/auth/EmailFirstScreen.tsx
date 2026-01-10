@@ -34,7 +34,7 @@ export default function EmailFirstScreen({
             </h1>
 
             {/* Subtitle */}
-            <p className="text-center mb-8 text-base leading-relaxed" style={{ fontFamily: 'var(--font-body)', color: 'rgba(245, 225, 191, 0.7)' }}>
+            <p className="text-center mb-8 text-base leading-relaxed" style={{ fontFamily: 'var(--font-body)', color: 'rgba(250, 222, 173, 0.7)' }}>
                 You can sign in using your ZenInn.com account to access our services
             </p>
 
@@ -89,7 +89,7 @@ export default function EmailFirstScreen({
                         alt="Google" 
                         width={32} 
                         height={32}
-                        className="w-8 h-8"
+                        className="w-10 h-10"
                     />
                 </button>
 
@@ -104,7 +104,7 @@ export default function EmailFirstScreen({
                         alt="Apple" 
                         width={32} 
                         height={32}
-                        className="w-8 h-8"
+                        className="w-10 h-10"
                     />
                 </button>
 
@@ -119,14 +119,14 @@ export default function EmailFirstScreen({
                         alt="Facebook" 
                         width={32} 
                         height={32}
-                        className="w-8 h-8"
+                        className="w-10 h-10"
                     />
                 </button>
             </div>
 
             {/* Terms & Conditions text */}
-            <p className="text-xs text-center mb-2 leading-relaxed" style={{ fontFamily: 'var(--font-body)', color: 'rgba(156, 163, 175, 0.9)' }}>
-                By continuing, you agree to Zen Inn's{" "}
+            <p className="text-xs text-center mb-2 leading-relaxed" style={{ fontFamily: 'var(--font-body)', color: 'rgba(206, 210, 216, 0.9)' }}>
+                By signing in or creating an account, you agree with our{" "}
                 <Link href="/terms" className="underline hover:opacity-80 transition-opacity" style={{ color: 'rgba(245, 225, 191, 0.8)' }}>
                     Terms of Service
                 </Link>

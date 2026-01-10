@@ -15,9 +15,9 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
                 className="absolute inset-0 z-0 bg-no-repeat"
                 style={{
                     backgroundImage: "url('/auth-bg.png')",
-                    backgroundSize: '110%',
-                    backgroundPosition: '50% 35%',
-                    backgroundColor: "#e5e7eb" // Fallback color if image doesn't exist
+                    backgroundSize: '100%',
+                    backgroundPosition: '50% 50%',
+                    backgroundColor: "#e5e7eb39"
                 }}
             >
                 <div className="absolute inset-0 bg-gray-100/40" />

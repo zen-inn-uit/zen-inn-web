@@ -21,8 +21,7 @@ function PasswordForm({
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // UI only - no auth logic needed
-        // In a real app, this would call an auth API
+
     };
 
     return (

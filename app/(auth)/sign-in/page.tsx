@@ -8,7 +8,7 @@ export default function SignInPage() {
         <AuthLayout>
             <EmailFirstScreen onSubmitAction="sign-in" />
             {/* Footer copyright text */}
-            <p className="text-sm text-center mt-8" style={{ fontFamily: 'var(--font-body)', color: 'rgba(156, 163, 175, 0.9)' }}>
+            <p className="text-sm text-center mt-8" style={{ fontFamily: 'var(--font-body)', color: 'rgba(227, 234, 244, 0.9)' }}>
                 &copy; {new Date().getFullYear()} Zen Inn. All rights reserved.
             </p>
         </AuthLayout>
