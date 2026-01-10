@@ -8,7 +8,7 @@ interface AuthCardProps {
 
 export default function AuthCard({ children }: AuthCardProps) {
     return (
-        <div className="backdrop-blur-lg bg-white/10 rounded-2xl border border-white/20 shadow-2xl p-8 md:p-10">
+        <div className="backdrop-blur-md bg-gray-50/60 rounded-3xl border border-gray-200/50 shadow-sm py-10 px-8 md:py-12 md:px-10">
             {children}
         </div>
     );

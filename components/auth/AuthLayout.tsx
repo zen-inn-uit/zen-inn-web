@@ -10,19 +10,19 @@ interface AuthLayoutProps {
 export default function AuthLayout({ children }: AuthLayoutProps) {
     return (
         <div className="min-h-screen relative flex items-center justify-center px-4 py-8">
-            {/* Full-screen background image with dark overlay */}
+            {/* Full-screen background image with light gray overlay */}
             <div 
                 className="absolute inset-0 z-0 bg-cover bg-center"
                 style={{
-                    backgroundImage: "url('/auth-bg.jpg')",
-                    backgroundColor: "#1f2937" // Fallback color if image doesn't exist
+                    backgroundImage: "url('/auth-bg.png')",
+                    backgroundColor: "#e5e7eb" // Fallback color if image doesn't exist
                 }}
             >
-                <div className="absolute inset-0 bg-black/50" />
+                <div className="absolute inset-0 bg-gray-100/40" />
             </div>
 
             {/* Main content */}
-            <div className="relative z-10 w-full max-w-md">
+            <div className="relative z-10 w-full" style={{ maxWidth: '560px' }}>
                 {children}
             </div>
 
