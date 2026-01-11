@@ -102,4 +102,18 @@ export const partnerAPI = {
   getPartnerBookings: (query?: QueryBookingDto) => {
     return axiosInstance.get<any, Booking[]>('/partners/bookings', { params: query });
   },
+
+  // Upload a single base64 image to Cloudinary
+  uploadBase64Image: (image: string, folder?: string) =>
+    axiosInstance.post<any, { url: string }>('/assets/upload-image', {
+      image,
+      folder: folder || 'hotels',
+    }),
+
+  // Upload multiple base64 images to Cloudinary
+  uploadBase64Images: (images: string[], folder?: string) =>
+    axiosInstance.post<any, { urls: string[] }>('/assets/upload-images', {
+      images,
+      folder: folder || 'hotels',
+    }),
 };

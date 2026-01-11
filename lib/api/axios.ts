@@ -27,7 +27,11 @@ axiosInstance.interceptors.request.use(
 
 // Response interceptor for handling errors globally
 axiosInstance.interceptors.response.use(
-  (response) => response.data,
+  (response) => {
+    // Backend wraps responses in { statusCode, message, data }
+    // Extract the actual data from the wrapper
+    return response.data?.data || response.data;
+  },
   (error) => {
     const message = error.response?.data?.message || error.message || 'Something went wrong';
     console.error('API Error:', message);
