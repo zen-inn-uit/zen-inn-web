@@ -115,7 +115,7 @@ export default function EmailFirstScreen({
                     aria-label="Sign in with Facebook"
                 >
                     <Image 
-                        src="/fb.svg" 
+                        src="/fb-blue.svg" 
                         alt="Facebook" 
                         width={32} 
                         height={32}

@@ -26,7 +26,7 @@ export default function ResetPasswordPage() {
                 
                 {/* Subtitle */}
                 <p className="text-secondary text-center mb-8 text-base md:text-lg" style={{ fontFamily: 'var(--font-body)' }}>
-                    Enter your email address and we'll send you a link to reset your password.
+                    Enter your email address and we&apos;ll send you a link to reset your password.
                 </p>
 
                 {/* Reset password form */}

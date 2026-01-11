@@ -50,7 +50,7 @@ export default function CheckoutFailurePage() {
         ? reasonParam 
         : "unknown";
     
-    const [newPid] = useState(`pid_${Date.now()}`);
+    const [newPid] = useState(() => `pid_${Date.now()}`);
     const failureInfo = failureMessages[reason];
     
     // Generate payment URL - use existing pid if available, otherwise use new one

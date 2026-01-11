@@ -112,3 +112,12 @@ button.dark {
   background-color: var(--color-primary);
   color: var(--color-accent)
 }
+
+button.transparent {
+  background-color: transparent;
+  color: var(--color-accent)
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
