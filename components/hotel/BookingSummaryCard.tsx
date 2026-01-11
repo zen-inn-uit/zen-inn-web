@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 interface BookingSummaryCardProps {
     pricePerNight: number;
     totalPrice: number;
@@ -72,13 +74,13 @@ export default function BookingSummaryCard({
             </div>
 
             {/* Reserve button */}
-            <button
-                type="button"
-                className="w-full py-3 rounded-lg text-white font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all"
+            <Link
+                href="/checkout/details"
+                className="block w-full py-3 rounded-lg text-white font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all text-center"
                 style={{ fontFamily: 'var(--font-display)', backgroundColor: 'var(--color-form)', fontSize: 'var(--fs-h5)' }}
             >
                 Reserve
-            </button>
+            </Link>
 
             <p className="text-xs text-center text-gray-500 mt-4" style={{ fontFamily: 'var(--font-body)' }}>
                 You won't be charged yet

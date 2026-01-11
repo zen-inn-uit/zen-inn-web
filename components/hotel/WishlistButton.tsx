@@ -13,11 +13,11 @@ export default function WishlistButton() {
         <button
             type="button"
             onClick={handleClick}
-            className="w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center hover:border-accent hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            className="w-14 h-14 rounded-full border border-gray-300 bg-white flex items-center justify-center hover:border-accent hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
             aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
         >
             <svg
-                className="w-5 h-5"
+                className="w-7 h-7"
                 fill={isWishlisted ? "currentColor" : "none"}
                 stroke="currentColor"
                 viewBox="0 0 24 24"
