@@ -5,8 +5,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { cancellationPolicySchema, type CancellationPolicyFormData } from '../schema/cancellation-policy.schema';
+import { HotelDTO } from '@/app/partner/hotels/dto/hotel.dto';
 
-export function CreatePolicyForm() {
+interface CreatePolicyFormProps {
+  hotels: HotelDTO[];
+}
+
+export function CreatePolicyForm({ hotels }: CreatePolicyFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -31,11 +36,12 @@ export function CreatePolicyForm() {
   const onSubmit = async (data: CancellationPolicyFormData) => {
     setIsSubmitting(true);
     try {
-      console.log('Creating policy:', data);
-      alert('Tạo chính sách thành công!');
+      const { cancellationPoliciesApi } = await import('../api/cancellation-policies.api');
+      await cancellationPoliciesApi.createPolicy(data);
       router.push('/partner/cancellation-policies');
-    } catch (error) {
-      alert('Tạo chính sách thất bại');
+      router.refresh();
+    } catch (error: any) {
+      alert(error.message || 'Tạo chính sách thất bại');
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -70,6 +76,20 @@ export function CreatePolicyForm() {
               className="w-full px-5 py-4 border border-slate-200 bg-slate-50/30 rounded-2xl focus:border-slate-400 focus:outline-none transition-all resize-none text-sm"
               placeholder="Mô tả chi tiết nội dung chính sách cho khách hàng..."
             />
+            
+            <div className="pt-2">
+              <label className="block text-[10px] font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Khách sạn áp dụng (Tùy chọn)</label>
+              <select
+                {...register('hotelId')}
+                className="w-full px-5 py-3.5 border border-slate-200 bg-white rounded-2xl focus:border-slate-400 focus:outline-none transition-all font-medium"
+              >
+                <option value="">Áp dụng cho tất cả khách sạn</option>
+                {hotels.map(h => (
+                  <option key={h.id} value={h.id}>{h.name}</option>
+                ))}
+              </select>
+              <p className="text-[10px] text-slate-400 mt-2 ml-1 italic font-medium">Bỏ trống nếu bạn muốn chính sách này có thể sử dụng cho bất kỳ khách sạn nào.</p>
+            </div>
           </div>
         </div>
 
@@ -164,7 +184,14 @@ export function CreatePolicyForm() {
           disabled={isSubmitting}
           className="px-10 py-4 bg-brand text-white font-bold text-sm rounded-2xl hover:shadow-xl hover:shadow-brand/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold"
         >
-          {isSubmitting ? 'Đang lưu hệ thống...' : 'Xác nhận tạo chính sách'}
+          {isSubmitting ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+              <span>Đang lưu hệ thống...</span>
+            </div>
+          ) : (
+            'Xác nhận tạo chính sách'
+          )}
         </button>
       </div>
     </form>

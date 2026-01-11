@@ -2,7 +2,10 @@ import { PageContainer } from '@/components/ui/page-container';
 import { CreatePolicyForm } from '../components/create-policy-form';
 import Link from 'next/link';
 
-export default function NewCancellationPolicyPage() {
+export default async function NewCancellationPolicyPage() {
+  const { partnerAPI } = await import('@/lib/api/partner-api');
+  const hotels = await partnerAPI.listHotels();
+
   return (
     <PageContainer className="p-8">
       <div className="mb-8">
@@ -19,7 +22,7 @@ export default function NewCancellationPolicyPage() {
         <p className="text-slate-500 mt-2 font-medium">Thiết lập các điều kiện hoàn trả và thay đổi linh hoạt cho khách hàng của bạn</p>
       </div>
 
-      <CreatePolicyForm />
+      <CreatePolicyForm hotels={hotels} />
     </PageContainer>
   );
 }

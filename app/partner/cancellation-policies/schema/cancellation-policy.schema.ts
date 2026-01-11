@@ -8,6 +8,7 @@ export const cancellationPolicySchema = z.object({
   noShowRefundPercent: z.number().min(0).max(100),
   modificationAllowed: z.boolean(),
   modificationFeePercent: z.number().min(0).max(100),
+  hotelId: z.string().optional(),
 });
 
 export type CancellationPolicyFormData = z.infer<typeof cancellationPolicySchema>;
