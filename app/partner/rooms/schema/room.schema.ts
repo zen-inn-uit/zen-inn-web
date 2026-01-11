@@ -34,7 +34,7 @@ export const createRoomSchema = z.object({
   beds: z.array(bedSchema).optional(),
   amenities: z.array(amenitySchema).optional(),
   cancellationPolicyId: z.string().optional(),
-  ratePlanId: z.string().min(1, 'Gói giá là bắt buộc'),
+  ratePlanId: z.string().optional(),
 }).refine((data) => data.availableCount <= data.totalCount, {
   message: 'Số phòng trống không được vượt quá tổng số phòng',
   path: ['availableCount'],

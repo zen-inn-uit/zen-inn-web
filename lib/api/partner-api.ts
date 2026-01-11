@@ -51,6 +51,12 @@ export const partnerAPI = {
   listRooms: (hotelId: string) =>
     axiosInstance.get<any, Room[]>(`/partners/hotels/${hotelId}/rooms`),
 
+  listAllPartnerRooms: () =>
+    axiosInstance.get<any, Room[]>('/partners/rooms'),
+
+  getRoomById: (id: string) =>
+    axiosInstance.get<any, Room>(`/partners/rooms/${id}`),
+
   getRoom: (hotelId: string, roomId: string) =>
     axiosInstance.get<any, Room>(`/partners/hotels/${hotelId}/rooms/${roomId}`),
 
@@ -71,6 +77,12 @@ export const partnerAPI = {
 
   listRatePlans: (hotelId: string, roomId: string) =>
     axiosInstance.get<any, RatePlan[]>(`/partners/hotels/${hotelId}/rooms/${roomId}/rate-plans`),
+
+  listPartnerRatePlans: () =>
+    axiosInstance.get<any, RatePlan[]>('/partners/rate-plans'),
+
+  createStandaloneRatePlan: (data: any) =>
+    axiosInstance.post<any, RatePlan>('/partners/rate-plans', data),
 
   getRatePlan: (hotelId: string, roomId: string, ratePlanId: string) =>
     axiosInstance.get<any, RatePlan>(`/partners/hotels/${hotelId}/rooms/${roomId}/rate-plans/${ratePlanId}`),

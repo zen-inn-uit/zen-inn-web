@@ -1,17 +1,29 @@
 import { PageContainer } from '@/components/ui/page-container';
-import { RoomForm } from '../components/room-form';
+import { RoomForm } from '../../components/room-form';
 import { partnerAPI } from '@/lib/api/partner-api';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
+interface EditRoomPageProps {
+  params: Promise<{
+    roomId: string;
+  }>;
+}
 
-export default async function NewRoomPage() {
+export default async function EditRoomPage({ params }: EditRoomPageProps) {
+  const { roomId } = await params;
+  
   try {
-    const [hotels, policies, ratePlans] = await Promise.all([
+    const [hotels, room, policies, ratePlans] = await Promise.all([
       partnerAPI.listHotels(),
+      partnerAPI.getRoomById(roomId),
       partnerAPI.listPolicies(),
       partnerAPI.listPartnerRatePlans(),
     ]);
+
+    if (!room) {
+      return notFound();
+    }
 
     return (
       <PageContainer className="p-8">
@@ -27,24 +39,25 @@ export default async function NewRoomPage() {
             </div>
             <span className="font-bold text-sm">Quay lại danh sách phòng</span>
           </Link>
-          <h1 className="text-3xl font-bold text-slate-900 font-outfit">Thêm loại phòng mới</h1>
-          <p className="text-slate-500 mt-2">Thiết lập thông tin cho loại phòng mới trong hệ thống khách sạn của bạn</p>
+          <h1 className="text-3xl font-bold text-slate-900 font-outfit">Chỉnh sửa phòng</h1>
+          <p className="text-slate-500 mt-2">{room.name} - {room.hotel?.name}</p>
         </div>
 
         <RoomForm 
           hotels={hotels} 
           policies={policies} 
-          ratePlans={ratePlans} 
+          ratePlans={ratePlans}
+          initialData={room} 
         />
       </PageContainer>
     );
   } catch (error) {
-    console.error('Failed to load new room page:', error);
+    console.error('Error fetching room for edit:', error);
     return (
       <PageContainer className="p-8">
         <div className="bg-white rounded-3xl border border-slate-200 p-20 text-center">
-          <h2 className="text-2xl font-bold text-slate-900 mb-3 font-outfit">Không thể tải dữ liệu</h2>
-          <p className="text-slate-500 mb-8">Vui lòng kiểm tra lại kết nối hoặc thử lại sau vài giây</p>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2 font-outfit">Không tìm thấy phòng</h2>
+          <p className="text-slate-500 mb-8">Phòng bạn đang tìm kiếm không tồn tại hoặc bạn không có quyền truy cập</p>
           <Link href="/partner/rooms" className="px-8 py-3 bg-brand text-white rounded-xl font-bold text-sm shadow-lg">
              Quay lại danh sách
           </Link>
