@@ -31,7 +31,7 @@ export function SignInForm() {
       localStorage.setItem('access_token', response.accessToken);
       localStorage.setItem('refresh_token', response.refreshToken);
       
-      if (response.user.role === 'PARTNER') {
+      if (response.user?.role === 'PARTNER') {
         router.push('/partner/dashboard');
       } else {
         router.push('/');

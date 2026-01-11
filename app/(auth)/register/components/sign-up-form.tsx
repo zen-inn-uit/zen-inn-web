@@ -56,7 +56,7 @@ export function SignUpForm() {
       setCurrentStep('complete');
       
       setTimeout(() => {
-        if (response.user.role === 'PARTNER') {
+        if (response.user?.role === 'PARTNER') {
           router.push('/partner/dashboard');
         } else {
           router.push('/');
