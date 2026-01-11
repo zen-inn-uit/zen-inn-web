@@ -66,11 +66,13 @@ export default function CheckoutPaymentPage() {
         if (status === "PAID") {
             router.replace("/checkout/success");
         } else if (status === "FAILED") {
-            router.replace("/checkout/failure");
+            // Extract reason from simulate query param if present
+            const reason = searchParams.get("reason") || "declined";
+            router.replace(`/checkout/failure?pid=${pid}&reason=${reason}`);
         } else if (status === "EXPIRED") {
             router.replace(`/checkout/expired?pid=${pid}`);
         }
-    }, [status, router, pid]);
+    }, [status, router, pid, searchParams]);
 
     // Handle "I've paid" button click - simulate payment success
     const handlePaidClick = () => {
