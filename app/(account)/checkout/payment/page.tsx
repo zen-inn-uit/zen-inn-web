@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +17,7 @@ export default function CheckoutPaymentPage() {
     
     const [status, setStatus] = useState<PaymentStatus>("PENDING");
     const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes in seconds
-    const [hasClickedPaid, setHasClickedPaid] = useState(false);
+    const hasProcessedPaid = useRef(false);
 
     // Countdown timer
     useEffect(() => {
@@ -39,25 +39,27 @@ export default function CheckoutPaymentPage() {
         return () => clearInterval(timer);
     }, [timeRemaining]);
 
+    // Handle simulate=fail query param
+    useEffect(() => {
+        if (simulate === "fail" && status === "PENDING") {
+            const timer = setTimeout(() => {
+                setStatus("FAILED");
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [simulate, status]);
+
     // Mock payment status polling
     useEffect(() => {
         if (status !== "PENDING") return;
 
         const pollInterval = setInterval(() => {
-            // Simulate payment status
-            if (simulate === "fail") {
-                setStatus("FAILED");
-            } else if (hasClickedPaid) {
-                // After clicking "I've paid", mark as PAID after a short delay
-                const randomDelay = Math.random() * 2000 + 1000; // 1-3 seconds
-                setTimeout(() => {
-                    setStatus("PAID");
-                }, randomDelay);
-            }
-        }, 2000);
+            // In a real app, this would check the payment status from the server
+            // For now, we just keep polling (status stays PENDING unless expired or simulate=fail)
+        }, 2500);
 
         return () => clearInterval(pollInterval);
-    }, [status, simulate, hasClickedPaid]);
+    }, [status]);
 
     // Handle redirects based on status
     useEffect(() => {
@@ -70,8 +72,15 @@ export default function CheckoutPaymentPage() {
         }
     }, [status, router, pid]);
 
+    // Handle "I've paid" button click - simulate payment success
     const handlePaidClick = () => {
-        setHasClickedPaid(true);
+        if (!hasProcessedPaid.current && status === "PENDING") {
+            hasProcessedPaid.current = true;
+            // Simulate payment success after a short delay (1-2 polls)
+            setTimeout(() => {
+                setStatus("PAID");
+            }, 2000);
+        }
     };
 
     const formatTime = (seconds: number) => {
@@ -137,7 +146,7 @@ export default function CheckoutPaymentPage() {
                         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 w-full max-w-md">
                             <div className="relative w-full aspect-square mb-4 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
                                 <Image
-                                    src="/qr-placeholder.png"
+                                    src="/qr-placeholder.svg"
                                     alt="QR Code"
                                     fill
                                     className="object-contain p-4"
