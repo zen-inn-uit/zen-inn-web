@@ -7,7 +7,6 @@ import SearchBar from "@/components/search/SearchBar";
 import FilterSidebar from "@/components/search/FilterSidebar";
 import HotelCard from "@/components/search/HotelCard";
 
-// Mock hotel data
 const mockHotels = [
     {
         id: "1",

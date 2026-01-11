@@ -12,8 +12,7 @@ export default function ResetPasswordPage() {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email") as string;
-        // UI only - no auth logic needed
-        // In a real app, this would call a password reset API
+       
         router.push(`/reset-password/sent?email=${encodeURIComponent(email)}`);
     };
 
