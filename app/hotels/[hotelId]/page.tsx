@@ -3,14 +3,16 @@
 import { useParams } from "next/navigation";
 import Navbar from "@/components/ui/navbar";
 import ChatButton from "@/components/ui/chat-button";
+import SearchBar from "@/components/search/SearchBar";
+import MiniMap from "@/components/search/MiniMap";
 import Breadcrumbs from "@/components/hotel/Breadcrumbs";
+import WishlistButton from "@/components/hotel/WishlistButton";
 import HotelGallery from "@/components/hotel/HotelGallery";
 import BookingSummaryCard from "@/components/hotel/BookingSummaryCard";
 import RoomList from "@/components/hotel/RoomList";
 import HotelPolicies from "@/components/hotel/HotelPolicies";
 import HotelReviews from "@/components/hotel/HotelReviews";
 
-// Mock hotel data
 const getMockHotel = (hotelId: string) => {
     const images = ["/auth-bg.png", "/auth-bg.png", "/auth-bg.png"];
     
@@ -123,18 +125,27 @@ export default function HotelDetailPage() {
             </header>
 
             <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+                {/* Search bar */}
+                <SearchBar />
+
                 {/* Breadcrumbs */}
                 <Breadcrumbs hotelName={hotel.name} location={hotel.location} />
 
                 {/* Title and rating */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                    <div className="flex-1">
-                        <h1 className="text-3xl md:text-4xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
-                            {hotel.name}
-                        </h1>
-                        <p className="text-lg text-gray-600" style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-h5)' }}>
-                            {hotel.location}
-                        </p>
+                    <div className="flex-1 flex items-start gap-4">
+                        <div className="flex-1">
+                            <h1 className="text-3xl md:text-4xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
+                                {hotel.name}
+                            </h1>
+                            <p className="text-lg text-gray-600" style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-h5)' }}>
+                                {hotel.location}
+                            </p>
+                        </div>
+                        {/* Wishlist button */}
+                        <div className="mt-2">
+                            <WishlistButton />
+                        </div>
                     </div>
                     <div className="mt-4 md:mt-0 md:ml-6">
                         <div className="bg-accent/20 rounded-lg px-4 py-3 text-center">
@@ -197,8 +208,8 @@ export default function HotelDetailPage() {
                         />
                     </div>
 
-                    {/* Right column - Booking card */}
-                    <div className="w-full md:w-[420px] flex-shrink-0">
+                    {/* Right column - Booking card and map */}
+                    <div className="w-full md:w-[420px] flex-shrink-0 space-y-6">
                         <BookingSummaryCard
                             pricePerNight={hotel.pricePerNight}
                             totalPrice={hotel.totalPrice}
@@ -207,6 +218,7 @@ export default function HotelDetailPage() {
                             checkOut={hotel.checkOut}
                             guests={hotel.guests}
                         />
+                        <MiniMap />
                     </div>
                 </div>
             </main>
