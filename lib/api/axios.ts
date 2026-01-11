@@ -36,10 +36,12 @@ axiosInstance.interceptors.response.use(
     const message = error.response?.data?.message || error.message || 'Something went wrong';
     console.error('API Error:', message);
     
-    // Optional: Handle 401 Unauthorized globally
+    // Handle 401 Unauthorized - redirect to login
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      // localStorage.removeItem('access_token');
-      // window.location.href = '/login';
+      console.warn('🔒 Token expired or invalid. Redirecting to login...');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      window.location.href = '/login';
     }
     
     return Promise.reject(new Error(message));

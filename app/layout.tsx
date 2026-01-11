@@ -1,5 +1,6 @@
 import "./globals.css";
-import {LoadingProvider} from "@/contexts/loading-context";
+import { LoadingProvider } from "@/contexts/loading-context";
+import { AuthProvider } from "@/contexts/auth-context";
 
 export const metadata = {
   title: "Zen Inn Hotel Booking Website",
@@ -10,9 +11,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <LoadingProvider>
-          {children}
-        </LoadingProvider>
+        <AuthProvider>
+          <LoadingProvider>
+            {children}
+          </LoadingProvider>
+        </AuthProvider>
       </body>
     </html>
   );
