@@ -6,6 +6,7 @@ import SearchBar from "@/components/ui/search-bar";
 import Image from "next/image";
 import Link from "next/link";
 import ExploreSection from "@/components/ui/explore";
+import CategoriesSection from "@/components/ui/categories";
 
 export default function Home() {
    return (
@@ -18,6 +19,7 @@ export default function Home() {
         <SearchBar />
         <OffersSection />
         <ExploreSection />
+        <CategoriesSection />
       </main>
       <footer id="footer" className="py-12 px-6 mt-20">
         <div className="">
