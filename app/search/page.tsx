@@ -1,25 +1,7 @@
-<<<<<<< HEAD
-import SearchBar from "@/components/ui/search-bar";
-
-export default async function SearchPage({searchParams}: {searchParams: Promise<{location?: string, dateFrom?: string, dateTo?: string, guests?: string}>}) {
-    const params = await searchParams;
-
-    return (
-        <>
-            <SearchBar location={params.location} dateFrom={params.dateFrom} dateTo={params.dateTo} guests={params.guests} />
-        </>
-        
-    );
-}
-=======
-"use client";
-
-import { useState } from "react";
 import Navbar from "@/components/ui/navbar";
 import ChatButton from "@/components/ui/chat-button";
-import SearchBar from "@/components/search/SearchBar";
-import FilterSidebar from "@/components/search/FilterSidebar";
-import HotelCard from "@/components/search/HotelCard";
+import SearchBarActions from "@/components/helpers/search-bar-actions";
+import SearchResults from "@/components/search/SearchResults";
 
 const mockHotels = [
     {
@@ -120,9 +102,8 @@ const mockHotels = [
     }
 ];
 
-export default function SearchPage() {
-    const [showFilters, setShowFilters] = useState(false);
-    const resultsCount = mockHotels.length;
+export default async function SearchPage({searchParams}: {searchParams: Promise<{location?: string, dateFrom?: string, dateTo?: string, guests?: string}>}) {
+    const params = await searchParams;
 
     return (
         <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
@@ -131,59 +112,18 @@ export default function SearchPage() {
             </header>
 
             <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
-                {/* Search bar section */}
                 <div className="mb-6">
-                    <SearchBar />
-                    
-                    {/* Results summary */}
-                    <p className="text-base mt-4" style={{ fontFamily: 'var(--font-body)', color: '#60463d', fontSize: 'var(--fs-h5)' }}>
-                        <strong>{resultsCount} stays found</strong>
-                    </p>
+                    <div className="m-2 flex justify-center items-center space-x-20">
+                        <h3 className="font-display text-brand text-2xl">
+                            Where do you want to stay?
+                        </h3>
+                    <SearchBarActions location={params.location} dateFrom={params.dateFrom} dateTo={params.dateTo} guests={params.guests} />
+                </div>
                 </div>
 
-                {/* Main content - Two column layout */}
-                <div className="flex flex-col md:flex-row gap-6">
-                    {/* Filter sidebar */}
-                    <div className="w-full md:w-[320px] flex-shrink-0">
-                        {/* Mobile filter toggle button */}
-                        <button
-                            onClick={() => setShowFilters(!showFilters)}
-                            className="md:hidden w-full mb-4 px-4 py-3 bg-white rounded-lg border border-gray-300 font-medium hover:bg-gray-50 transition-colors"
-                            style={{ fontFamily: 'var(--font-body)', color: 'var(--color-form)' }}
-                        >
-                            {showFilters ? "Hide Filters" : "Show Filters"}
-                        </button>
-                        
-                        {/* Filter sidebar - hidden on mobile unless toggled */}
-                        <div className={`${showFilters ? 'block' : 'hidden'} md:block`}>
-                            <FilterSidebar />
-                        </div>
-                    </div>
-
-                    {/* Results list */}
-                    <div className="flex-1 min-w-0">
-                        <div className="space-y-6">
-                            {mockHotels.map(hotel => (
-                                <HotelCard
-                                    key={hotel.id}
-                                    id={hotel.id}
-                                    name={hotel.name}
-                                    location={hotel.location}
-                                    image={hotel.image}
-                                    pricePerNight={hotel.pricePerNight}
-                                    totalPrice={hotel.totalPrice}
-                                    rating={hotel.rating}
-                                    reviewCount={hotel.reviewCount}
-                                    tags={hotel.tags}
-                                    nights={hotel.nights}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div>
+                <SearchResults hotels={mockHotels} />
             </main>
 
-            {/* Footer - Reuse from home page pattern */}
             <footer id="footer" className="py-12 px-6 mt-20 bg-brand/10">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex justify-between md:flex-row flex-col items-center md:items-start space-y-6 md:space-y-0">
@@ -201,10 +141,8 @@ export default function SearchPage() {
                 </div>
             </footer>
 
-            {/* Floating chat button */}
             <ChatButton />
         </div>
     );
 }
 
->>>>>>> main

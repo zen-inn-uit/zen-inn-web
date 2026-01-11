@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-export function ResetPasswordPage() {
-    return (
-        <div className="py-20 px-6">
-            <h1 className="font-display text-secondary text-4xl text-center">Reset Password Page</h1>
-            <p className="text-accent text-center mt-4">Reset your password here.</p>
-        </div>
-=======
 "use client";
 
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -34,7 +26,7 @@ export default function ResetPasswordPage() {
                 
                 {/* Subtitle */}
                 <p className="text-secondary text-center mb-8 text-base md:text-lg" style={{ fontFamily: 'var(--font-body)' }}>
-                    Enter your email address and we'll send you a link to reset your password.
+                    Enter your email address and we&apos;ll send you a link to reset your password.
                 </p>
 
                 {/* Reset password form */}
@@ -85,6 +77,5 @@ export default function ResetPasswordPage() {
                 &copy; {new Date().getFullYear()} Zen Inn. All rights reserved.
             </p>
         </AuthLayout>
->>>>>>> main
     );
 }
