@@ -6,8 +6,11 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createRoomSchema, type CreateRoomFormData } from '../schema/create-room.schema';
 import { HotelDTO } from '@/app/partner/hotels/dto/hotel.dto';
-import { CancellationPolicyDTO } from '../../cancellation-policies/dto/cancellation-policy.dto';
-import { RatePlanDTO } from '../../rate-plans/dto/rate-plan.dto';
+import { CancellationPolicyDTO } from '@/app/partner/cancellation-policies/dto/cancellation-policy.dto';
+import { RatePlanDTO } from '@/app/partner/rate-plans/dto/rate-plan.dto';
+import { partnerAPI } from '@/lib/api/partner-api';
+import { useLoading } from '@/contexts/loading-context';
+import { CreateRoomDto } from '@/app/partner/rooms/dto/create-room.dto';
 
 interface CreateRoomFormProps {
   hotels: HotelDTO[];
@@ -18,6 +21,7 @@ interface CreateRoomFormProps {
 export function CreateRoomForm({ hotels, policies, ratePlans }: CreateRoomFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { startLoading, stopLoading } = useLoading();
   const [images, setImages] = useState<string[]>([]);
 
   const {
@@ -79,20 +83,35 @@ export function CreateRoomForm({ hotels, policies, ratePlans }: CreateRoomFormPr
   };
 
   const onSubmit = async (data: CreateRoomFormData) => {
+    startLoading();
     setIsSubmitting(true);
 
     try {
-      console.log('Creating room:', {
-        ...data,
+      const payload: CreateRoomDto = {
+        name: data.name,
+        roomType: data.roomType,
+        description: data.description,
+        capacity: data.capacity,
+        area: data.area,
+        totalCount: data.totalCount,
+        availableCount: data.availableCount,
         images: images,
-      });
+        ratePlanId: data.ratePlanId,
+        cancellationPolicyId: data.cancellationPolicyId,
+        beds: data.beds?.map(b => ({ bedType: b.bedType, quantity: b.quantity })),
+        amenities: data.amenities?.map(a => ({ 
+          name: a.name, 
+          category: a.category,
+        })),
+      };
 
-      alert('Tạo phòng thành công!');
+      await partnerAPI.createRoom(data.hotelId, payload);
       router.push('/partner/rooms');
     } catch (error) {
-      alert('Tạo phòng thất bại');
-      console.error(error);
+      console.error('Failed to create room:', error);
+      alert('Tạo phòng thất bại. Vui lòng thử lại.');
     } finally {
+      stopLoading();
       setIsSubmitting(false);
     }
   };

@@ -5,9 +5,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createHotelSchema, type CreateHotelFormData } from '../schema/create-hotel.schema';
+import { partnerAPI } from '@/lib/api/partner-api';
+import { useLoading } from '@/contexts/loading-context';
+import { CreateHotelDto } from '@/app/partner/hotels/dto/create-hotel.dto';
 
 export function CreateHotelForm() {
   const router = useRouter();
+  const { startLoading, stopLoading } = useLoading();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [primaryImage, setPrimaryImage] = useState<string>('');
   const [subImages, setSubImages] = useState<string[]>([]);
@@ -63,22 +67,38 @@ export function CreateHotelForm() {
   };
 
   const onSubmit = async (data: CreateHotelFormData) => {
+    startLoading();
     setIsSubmitting(true);
     try {
+      // Step 1: Upload images to Cloudinary if there are any
+      let imageUrls: string[] = [];
       const allImages = primaryImage ? [primaryImage, ...subImages] : subImages;
-      const payload = {
-        ...data,
-        images: allImages,
+      
+      if (allImages.length > 0) {
+        console.log('Uploading images to Cloudinary...');
+        const uploadResult = await partnerAPI.uploadBase64Images(allImages, 'hotels');
+        imageUrls = uploadResult.urls;
+        console.log('Images uploaded successfully:', imageUrls);
+      }
+
+      // Step 2: Create hotel with image URLs
+      const payload: CreateHotelDto = {
+        name: data.name,
+        description: data.description,
+        address: data.address,
+        city: data.city,
+        country: data.country,
+        starRating: data.starRating,
+        images: imageUrls, // Use Cloudinary URLs instead of base64
       };
       
-      console.log('Creating hotel:', payload);
-      
-      alert('Tạo khách sạn thành công!');
+      await partnerAPI.createHotel(payload);
       router.push('/partner/hotels');
     } catch (error) {
-      alert('Tạo khách sạn thất bại');
-      console.error(error);
+      console.error('Failed to create hotel:', error);
+      alert('Tạo khách sạn thất bại. Vui lòng thử lại.');
     } finally {
+      stopLoading();
       setIsSubmitting(false);
     }
   };
@@ -108,7 +128,7 @@ export function CreateHotelForm() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Số điện thoại</label>
+                <label className="block text-xs font-bold text-slate-400 mb-1">Số điện thoại</label>
                 <input
                   type="text"
                   {...register('phone')}
@@ -117,7 +137,7 @@ export function CreateHotelForm() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Xếp hạng sao</label>
+                <label className="block text-xs font-bold text-slate-400 mb-1">Xếp hạng sao</label>
                 <select
                   {...register('starRating', { valueAsNumber: true })}
                   className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:border-slate-400 focus:outline-none transition-all"
@@ -264,7 +284,7 @@ export function CreateHotelForm() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                 </div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Thêm ảnh</span>
+                <span className="text-[10px] font-bold text-slate-400 tracking-wider">Thêm ảnh</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -280,20 +300,20 @@ export function CreateHotelForm() {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-4 mt-12 pt-8 border-t border-slate-100">
+      <div className="flex justify-end gap-4 mt-12 pt-8 border-t border-slate-100">
         <button
           type="button"
           onClick={() => router.push('/partner/hotels')}
-          className="px-8 py-3 border-2 border-slate-200 text-slate-600 font-bold text-sm rounded-xl hover:bg-slate-50 transition-colors"
+          className="px-10 py-3 border-2 border-slate-200 text-slate-600 font-bold text-sm rounded-xl hover:bg-slate-50 transition-colors font-bold"
         >
-          HỦY BỎ
+          Hủy bỏ
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex-1 px-8 py-3 bg-brand text-white font-bold text-sm rounded-xl hover:shadow-lg hover:shadow-brand/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-10 py-3 bg-brand text-white font-bold text-sm rounded-xl hover:shadow-lg hover:shadow-brand/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold"
         >
-          {isSubmitting ? 'ĐANG XỬ LÝ...' : 'TẠO KHÁCH SẠN NGAY'}
+          {isSubmitting ? 'Đang xử lý...' : 'Tạo khách sạn ngay'}
         </button>
       </div>
     </form>

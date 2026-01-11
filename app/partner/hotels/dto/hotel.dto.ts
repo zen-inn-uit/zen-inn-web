@@ -9,6 +9,7 @@ export interface HotelDTO {
   email?: string;
   website?: string;
   rating?: number;
+  starRating?: number;
   images?: string[];
   amenities?: string[];
   checkInTime?: string;
