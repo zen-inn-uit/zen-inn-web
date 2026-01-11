@@ -35,7 +35,8 @@ export default function CheckoutReviewPage() {
 
     const handleConfirmBooking = () => {
         if (agreedToPolicy) {
-            router.push("/checkout/success");
+            const pid = `pid_${Date.now()}`;
+            router.push(`/checkout/payment?pid=${pid}`);
         }
     };
 
