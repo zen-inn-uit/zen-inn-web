@@ -1,3 +1,4 @@
+import "@/lib/suppress-url-parse-warning";
 import "./globals.css";
 import { LoadingProvider } from "@/contexts/loading-context";
 import { AuthProvider } from "@/contexts/auth-context";

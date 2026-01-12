@@ -14,4 +14,5 @@ export interface CreateRoomDto {
   amenities?: CreateAmenityDto[];
   ratePlanId?: string;
   cancellationPolicyId?: string;
+  basePrice?: number;
 }
