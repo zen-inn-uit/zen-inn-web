@@ -34,12 +34,26 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg-light)' }}>
-            <header>
+        <div className="min-h-screen relative" style={{ backgroundColor: 'var(--color-bg-light)' }}>
+            {/* Subtle background layer for glass effect */}
+            <div 
+                className="absolute inset-0 z-0 bg-no-repeat opacity-20"
+                style={{
+                    backgroundImage: "url('/auth-bg.png')",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                }}
+            >
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5" />
+            </div>
+            {/* Dark overlay for improved readability */}
+            <div className="absolute inset-0 z-0 bg-black/20" />
+
+            <header className="relative z-10">
                 <Navbar />
             </header>
 
-            <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+            <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-8">
                 {/* Profile Header */}
                 <ProfileHeader name={user.name} />
 
@@ -56,7 +70,7 @@ export default function ProfilePage() {
             </main>
 
             {/* Footer */}
-            <footer id="footer" className="py-12 px-6 mt-20">
+            <footer id="footer" className="relative z-10 py-12 px-6 mt-20">
                 <div className="">
                 <div>
                     <div className="flex justify-between md:flex-row flex-col">

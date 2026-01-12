@@ -13,7 +13,13 @@ export default function ProfileSidebar({ activeItem = "personal-details" }: Prof
     ];
 
     return (
-        <div className="rounded-xl border border-gray-200 shadow-sm p-4 w-full md:w-[280px] flex-shrink-0" style={{ backgroundColor: 'var(--color-secondary)' }}>
+        <div 
+            className="rounded-[28px] border backdrop-blur-sm shadow-md p-4 w-full md:w-[280px] flex-shrink-0"
+            style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.28)',
+                borderColor: 'rgba(255, 255, 255, 0.35)',
+            }}
+        >
             <nav className="flex flex-col gap-2">
                 {menuItems.map((item) => {
                     const isActive = item.id === activeItem;
@@ -23,13 +29,13 @@ export default function ProfileSidebar({ activeItem = "personal-details" }: Prof
                             type="button"
                             className={`px-4 py-3 rounded-lg text-left transition-colors ${
                                 isActive
-                                    ? "bg-white border-2 border-accent shadow-md font-bold"
-                                    : "border border-gray-300/50 hover:bg-white/60 font-medium"
+                                    ? "bg-white/20 border border-white/30 font-bold"
+                                    : "bg-white/0 border border-transparent hover:bg-white/12 font-medium"
                             }`}
                             style={{
                                 fontFamily: 'var(--font-body)',
                                 fontSize: 'var(--fs-h5)',
-                                color: isActive ? 'var(--color-primary)' : '#60463d',
+                                color: isActive ? 'var(--color-primary)' : '#4a3728',
                             }}
                         >
                             {item.label}

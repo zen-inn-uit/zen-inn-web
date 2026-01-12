@@ -20,10 +20,10 @@ export default function ProfileHeader({ name }: ProfileHeaderProps) {
                     </span>
                 </div>
                 <div>
-                    <h2 className="text-3xl font-semibold mb-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-accent)' }}>
+                    <h2 className="text-3xl font-semibold mb-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-accent-700)' }}>
                         Hi, {firstName}
                     </h2>
-                    <p className="text-accent" style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-body)' }}>
+                    <p className="text-accent-700" style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-body)' }}>
                         How you doing?
                     </p>
                 </div>
@@ -33,14 +33,14 @@ export default function ProfileHeader({ name }: ProfileHeaderProps) {
             <div className="flex gap-3">
                 <Link
                     href="/wishlist"
-                    className="px-6 py-2 rounded-full border border-accent bg-transparent text-accent-700 font-medium hover:bg-accent/10 transition-colors"
+                    className="px-6 py-2 rounded-full border border-accent-700 bg-transparent text-accent-700 font-medium hover:bg-accent/10 transition-colors"
                     style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-h5)' }}
                 >
                     Wishlist
                 </Link>
                 <Link
                     href="/bookings"
-                    className="px-6 py-2 rounded-full border border-accent bg-transparent text-accent-700 font-medium hover:bg-accent/10 transition-colors"
+                    className="px-6 py-2 rounded-full border border-accent-700 bg-transparent text-accent-700 font-medium hover:bg-accent/10 transition-colors"
                     style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-h5)' }}
                 >
                     My Bookings
