@@ -17,6 +17,7 @@ import { CancellationPolicyDTO as CancellationPolicy } from '@/app/partner/cance
 import { Booking, QueryBookingDto } from '@/app/partner/reservations/dto/booking.dto';
 import axiosInstance from './axios';
 import { buildUrlWithParams } from './url-utils';
+import { BookingStatus } from './types';
 
 export const partnerAPI = {
   upsertPartnerProfile: (data: UpsertPartnerDto) =>
@@ -123,9 +124,12 @@ export const partnerAPI = {
     axiosInstance.delete<any, { success: boolean }>((`/partners/cancellation-policies/${id}`)),
 
   getPartnerBookings: (query?: QueryBookingDto) => {
-    const url = buildUrlWithParams('/partners/bookings', query as Record<string, string | number | boolean | undefined | null>);
+    const url = buildUrlWithParams('/bookings/partners/bookings', query as Record<string, string | number | boolean | undefined | null>);
     return axiosInstance.get<any, Booking[]>(url);
   },
+
+  updateBookingStatus: (id: string, status: BookingStatus) =>
+    axiosInstance.patch<any, Booking>(`/bookings/${id}/status`, { status }),
 
   // Upload a single base64 image to Cloudinary
   uploadBase64Image: (image: string, folder?: string) =>
