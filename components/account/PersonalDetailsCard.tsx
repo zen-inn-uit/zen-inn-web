@@ -29,7 +29,7 @@ export default function PersonalDetailsCard({ user }: PersonalDetailsCardProps) 
     ];
 
     return (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 md:p-8">
+        <div className="rounded-xl border border-gray-200 shadow-sm p-6 md:p-8" style={{ backgroundColor: 'var(--color-secondary)' }}>
             <div className="mb-6">
                 <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
                     Personal details
@@ -43,23 +43,23 @@ export default function PersonalDetailsCard({ user }: PersonalDetailsCardProps) 
                 {fields.map((field, index) => (
                     <div
                         key={field.label}
-                        className={`py-4 ${index !== fields.length - 1 ? "border-b border-gray-200" : ""}`}
+                        className={`py-5 ${index !== fields.length - 1 ? "border-b border-gray-300/30" : ""}`}
                     >
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                             {/* Label column */}
                             <div className="md:col-span-3">
-                                <span className="font-medium text-gray-700" style={{ fontFamily: 'var(--font-body)' }}>
+                                <span className="text-sm font-normal text-gray-500" style={{ fontFamily: 'var(--font-body)' }}>
                                     {field.label}
                                 </span>
                             </div>
 
                             {/* Value column */}
                             <div className="md:col-span-7 flex items-center gap-2">
-                                <span className="text-gray-900" style={{ fontFamily: 'var(--font-body)' }}>
+                                <span className="font-medium text-gray-900" style={{ fontFamily: 'var(--font-body)' }}>
                                     {field.value}
                                 </span>
                                 {field.verified && (
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100/80 text-green-700 border border-green-200/50">
                                         Verified
                                     </span>
                                 )}
@@ -69,8 +69,8 @@ export default function PersonalDetailsCard({ user }: PersonalDetailsCardProps) 
                             <div className="md:col-span-2 flex justify-end">
                                 <button
                                     type="button"
-                                    className="text-accent hover:text-accent/80 font-medium hover:underline transition-colors"
-                                    style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-body)' }}
+                                    className="px-3 py-1 text-sm border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-accent/20 hover:border-accent/50 transition-colors"
+                                    style={{ fontFamily: 'var(--font-body)' }}
                                 >
                                     {field.action}
                                 </button>

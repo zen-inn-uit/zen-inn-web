@@ -24,7 +24,7 @@ const mockUser = {
 
 export default function ProfilePage() {
     return (
-        <div className="min-h-screen" style={{ backgroundColor: '#f5f5f0' }}>
+        <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg-light)' }}>
             <header>
                 <Navbar />
             </header>
