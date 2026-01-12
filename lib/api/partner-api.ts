@@ -70,7 +70,17 @@ export const partnerAPI = {
     axiosInstance.get<any, { data: Room }>(`/partners/hotels/${hotelId}/rooms/${roomId}/inventory`),
 
   updateInventory: (hotelId: string, roomId: string, data: any) =>
-    axiosInstance.patch<any, { data: Room; message: string }>(`/partners/hotels/${hotelId}/rooms/${roomId}/inventory`, data),
+    axiosInstance.patch<any, { data: any; message: string }>(`/partners/hotels/${hotelId}/rooms/${roomId}/inventory`, data),
+
+  getHotelInventory: (hotelId: string, startDate: string, endDate: string) =>
+    axiosInstance.get<any, any[]>(`/partners/hotels/${hotelId}/inventory`, {
+      params: { startDate, endDate },
+    }),
+
+  bulkUpdateInventory: (roomId: string, updates: any[]) =>
+    axiosInstance.patch<any, { success: boolean }>(`/partners/rooms/${roomId}/inventory`, {
+      updates,
+    }),
 
   createRatePlan: (hotelId: string, roomId: string, data: CreateRatePlanDto) =>
     axiosInstance.post<any, RatePlan>(`/partners/hotels/${hotelId}/rooms/${roomId}/rate-plans`, data),
