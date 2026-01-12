@@ -239,38 +239,43 @@ export function InventoryOverview({ hotelId, inventoryData, isLoading, onRefresh
 
         {/* Revenue by Room Type */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6">
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-2">
-            <svg className="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            Doanh thu theo loại phòng (Triệu VND)
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={revenueByRoomData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fontSize: 11, fill: '#64748b' }}
-                stroke="#cbd5e1"
-              />
-              <YAxis 
-                tick={{ fontSize: 11, fill: '#64748b' }}
-                stroke="#cbd5e1"
-              />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1e293b', 
-                  border: 'none', 
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  color: '#fff'
-                }}
-                formatter={(value: any) => [`${value}M VND`, 'Doanh thu']}
-              />
-              <Bar dataKey="revenue" fill="#10b981" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Doanh thu theo loại phòng</h3>
+              <div className="flex items-center gap-4 mt-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-teal-400 rounded"></div>
+                  <span className="text-xs text-slate-600">Doanh thu (Triệu VND)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="relative h-[250px] flex items-end justify-between gap-4 px-2">
+            {revenueByRoomData.map((item, idx) => {
+              const maxRevenue = Math.max(...revenueByRoomData.map(r => r.revenue), 1);
+              const height = (item.revenue / maxRevenue) * 100;
+              
+              return (
+                <div key={idx} className="flex-1 flex flex-col items-center gap-2 group relative h-full justify-end">
+                  <div className="w-full flex justify-center h-full items-end relative">
+                    <div 
+                      className="w-full max-w-[60px] bg-teal-400 rounded-t-lg transition-all duration-500 hover:opacity-80 relative group/bar shadow-sm" 
+                      style={{ height: `${height}%` }}
+                    >
+                      <div className="absolute -top-16 left-1/2 -translate-x-1/2 opacity-0 group-hover/bar:opacity-100 transition-opacity bg-slate-900 text-white px-3 py-2 rounded-lg text-xs whitespace-nowrap pointer-events-none z-10">
+                        <div className="font-semibold">{item.name}</div>
+                        <div className="text-teal-300">Doanh thu: {item.revenue}M VND</div>
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-500 mt-2 text-center line-clamp-1 w-full" title={item.name}>
+                    {item.name}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
