@@ -275,7 +275,7 @@ export default function CheckoutReviewPage() {
                                         className={`w-full sm:w-auto px-8 py-3 rounded-lg font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all ${
                                             agreedToPolicy ? '' : 'opacity-50 cursor-not-allowed'
                                         }`}
-                                        style={{ fontFamily: 'var(--font-display)', backgroundColor: 'var(--color-form)', fontSize: 'var(--fs-h5)', color: 'white' }}
+                                        style={{ fontFamily: 'var(--font-display)', backgroundColor: 'var(--color-form)', fontSize: 'var(--fs-h5)', color: 'var(--color-accent)' }}
                                     >
                                         Confirm booking
                                     </button>

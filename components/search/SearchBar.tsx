@@ -77,7 +77,7 @@ export default function SearchBar() {
                 {/* Search button */}
                 <button
                     type="submit"
-                    className="w-full md:w-auto px-8 py-3 rounded-lg text-white font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all"
+                    className="w-full md:w-auto px-8 py-3 rounded-lg text-accent font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all"
                     style={{ fontFamily: 'var(--font-display)', backgroundColor: 'var(--color-form)', fontSize: 'var(--fs-h5)' }}
                 >
                     Search
