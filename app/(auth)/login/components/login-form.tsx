@@ -31,6 +31,10 @@ export function LoginForm() {
       localStorage.setItem('access_token', response.accessToken);
       localStorage.setItem('refresh_token', response.refreshToken);
       
+      // Also set cookies for server-side access
+      document.cookie = `access_token=${response.accessToken}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
+      document.cookie = `refresh_token=${response.refreshToken}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
+      
       if (response.user?.role === 'PARTNER') {
         router.push('/partner/dashboard');
       } else {
