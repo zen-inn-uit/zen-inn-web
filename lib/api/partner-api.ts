@@ -16,6 +16,7 @@ import { CreateCancellationPolicyDto } from '@/app/partner/cancellation-policies
 import { CancellationPolicyDTO as CancellationPolicy } from '@/app/partner/cancellation-policies/dto/cancellation-policy.dto';
 import { Booking, QueryBookingDto } from '@/app/partner/reservations/dto/booking.dto';
 import axiosInstance from './axios';
+import { buildUrlWithParams } from './url-utils';
 
 export const partnerAPI = {
   upsertPartnerProfile: (data: UpsertPartnerDto) =>
@@ -72,10 +73,10 @@ export const partnerAPI = {
   updateInventory: (hotelId: string, roomId: string, data: any) =>
     axiosInstance.patch<any, { data: any; message: string }>(`/partners/hotels/${hotelId}/rooms/${roomId}/inventory`, data),
 
-  getHotelInventory: (hotelId: string, startDate: string, endDate: string) =>
-    axiosInstance.get<any, any[]>(`/partners/hotels/${hotelId}/inventory`, {
-      params: { startDate, endDate },
-    }),
+  getHotelInventory: (hotelId: string, startDate: string, endDate: string) => {
+    const url = buildUrlWithParams(`/partners/hotels/${hotelId}/inventory`, { startDate, endDate });
+    return axiosInstance.get<any, any[]>(url);
+  },
 
   bulkUpdateInventory: (roomId: string, updates: any[]) =>
     axiosInstance.patch<any, { success: boolean }>(`/partners/rooms/${roomId}/inventory`, {
@@ -122,7 +123,8 @@ export const partnerAPI = {
     axiosInstance.delete<any, { success: boolean }>((`/partners/cancellation-policies/${id}`)),
 
   getPartnerBookings: (query?: QueryBookingDto) => {
-    return axiosInstance.get<any, Booking[]>('/partners/bookings', { params: query });
+    const url = buildUrlWithParams('/partners/bookings', query as Record<string, string | number | boolean | undefined | null>);
+    return axiosInstance.get<any, Booking[]>(url);
   },
 
   // Upload a single base64 image to Cloudinary
