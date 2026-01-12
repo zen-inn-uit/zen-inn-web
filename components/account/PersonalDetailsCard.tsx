@@ -171,12 +171,18 @@ export default function PersonalDetailsCard({ user, onUpdate }: PersonalDetailsC
     };
 
     return (
-        <div className="rounded-xl border border-gray-200 shadow-sm p-6 md:p-8" style={{ backgroundColor: 'var(--color-secondary)' }}>
+        <div 
+            className="rounded-[28px] border backdrop-blur-sm shadow-md p-6 md:p-8"
+            style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.28)',
+                borderColor: 'rgba(255, 255, 255, 0.35)',
+            }}
+        >
             <div className="mb-6">
-                <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
+                <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: '#3d2f26' }}>
                     Personal details
                 </h1>
-                <p className="text-gray-600" style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-h5)' }}>
+                <p className="text-gray-700" style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-h5)' }}>
                     Update your information and find out how it's used.
                 </p>
             </div>
@@ -188,12 +194,12 @@ export default function PersonalDetailsCard({ user, onUpdate }: PersonalDetailsC
                     return (
                         <div
                             key={field.key}
-                            className={`py-5 ${index !== fields.length - 1 ? "border-b border-gray-300/30" : ""}`}
+                            className={`py-5 ${index !== fields.length - 1 ? "border-b border-gray-300/25" : ""}`}
                         >
                             <div className={`grid grid-cols-1 md:grid-cols-12 gap-4 ${isEditing && field.key === "passport" ? "items-start" : "items-center"}`}>
                                 {/* Label column */}
                                 <div className="md:col-span-3">
-                                    <span className="text-sm font-normal text-gray-500" style={{ fontFamily: 'var(--font-body)' }}>
+                                    <span className="text-sm font-normal text-gray-600" style={{ fontFamily: 'var(--font-body)' }}>
                                         {field.label}
                                     </span>
                                 </div>
@@ -210,7 +216,7 @@ export default function PersonalDetailsCard({ user, onUpdate }: PersonalDetailsC
                                                 {field.value}
                                             </span>
                                             {field.verified && (
-                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100/80 text-green-700 border border-green-200/50">
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100/90 text-green-800 border border-green-300/60">
                                                     Verified
                                                 </span>
                                             )}
@@ -225,8 +231,8 @@ export default function PersonalDetailsCard({ user, onUpdate }: PersonalDetailsC
                                             <button
                                                 type="button"
                                                 onClick={() => handleSave(field.key)}
-                                                className="px-3 py-1 text-sm rounded-md text-white font-medium hover:opacity-90 transition-colors"
-                                                style={{ fontFamily: 'var(--font-body)', backgroundColor: 'var(--color-form)' }}
+                                                className="px-3 py-1 text-sm rounded-md text-accent-700 font-medium hover:opacity-90 transition-colors-700"
+                                                style={{ fontFamily: 'var(--font-body)', backgroundColor: 'var(--color-form-700)' }}
                                                 aria-label={`Save ${field.label.toLowerCase()}`}
                                             >
                                                 Save
@@ -234,8 +240,8 @@ export default function PersonalDetailsCard({ user, onUpdate }: PersonalDetailsC
                                             <button
                                                 type="button"
                                                 onClick={handleCancel}
-                                                className="px-3 py-1 text-sm border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 transition-colors"
-                                                style={{ fontFamily: 'var(--font-body)' }}
+                                                className="px-3 py-1 text-sm border border-gray-400/40 bg-white/30 rounded-md font-medium hover:bg-white/40 transition-colors"
+                                                style={{ fontFamily: 'var(--font-body)', color: '#4a3728' }}
                                                 aria-label={`Cancel editing ${field.label.toLowerCase()}`}
                                             >
                                                 Cancel
@@ -245,8 +251,8 @@ export default function PersonalDetailsCard({ user, onUpdate }: PersonalDetailsC
                                         <button
                                             type="button"
                                             onClick={() => handleEdit(field.key, field.value)}
-                                            className="px-3 py-1 text-sm border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-accent/20 hover:border-accent/50 transition-colors"
-                                            style={{ fontFamily: 'var(--font-body)' }}
+                                            className="px-3 py-1 text-sm border border-gray-400/50 bg-white/20 rounded-md font-medium hover:bg-white/35 hover:border-gray-500/60 transition-colors"
+                                            style={{ fontFamily: 'var(--font-body)', color: '#5a4235' }}
                                             aria-label={`Edit ${field.label.toLowerCase()}`}
                                         >
                                             {field.action}
