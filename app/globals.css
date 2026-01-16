@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    /* Brown theme colors */
-    --color-brand: #8B6F47;
+    /* Zen Inn theme - Brown primary */
+    --color-brand: #6B5B3D;
     --color-primary: #6B5B3D;
-    --color-secondary: #A0826D;
+    --color-secondary: #717171;
     --color-accent: #C9A882;
-    --color-bg-light: #F5EFE7;
-    --color-bg-cream: #FDFBF7;
+    --color-bg-light: #F9FAFB;
+    --color-bg-cream: #FFFFFF;
     
     /* Fonts */
     --font-display: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -129,32 +129,59 @@
 }
 
 body {
-  background-color: var(--color-bg-light);
+  background-color: #ffffff;
 }
 
 button {
-  border: 1.5px solid var(--color-accent);
+  border: 1px solid #DDDDDD;
   padding: 4px 16px;
   border-radius: 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 button.light {
-  -webkit-text-stroke: 0.3px black;
-  text-stroke: 1px black;
-  background-color: var(--color-accent);
-  color: white;
+  background-color: white;
+  color: #222222;
+  border-color: #DDDDDD;
+}
+
+button.light:hover {
+  border-color: #222222;
 }
 
 button.dark {
   background-color: var(--color-primary);
-  color: var(--color-accent);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+button.dark:hover {
+  opacity: 0.85;
 }
 
 button.transparent {
   background-color: transparent;
-  color: var(--color-accent);
+  color: #222222;
+  border-color: #DDDDDD;
 }
+
+button.transparent:hover {
+  background-color: #F7F7F7;
+  border-color: #222222;
+}
+
+button.primary {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+button.primary:hover {
+  opacity: 0.85;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+}
+
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
