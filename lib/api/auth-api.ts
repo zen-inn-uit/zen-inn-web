@@ -31,6 +31,13 @@ export interface AuthResponse {
   };
 }
 
+export interface UserProfile {
+  id: string;
+  email: string;
+  role: string;
+  status: string;
+}
+
 export const authAPI = {
   // Login with email and password
   login: (data: LoginRequest): Promise<AuthResponse> =>
@@ -49,7 +56,7 @@ export const authAPI = {
     axiosInstance.post('/auth/set-password', data),
 
   // Get current user profile
-  getProfile: (): Promise<any> =>
+  getProfile: (): Promise<UserProfile> =>
     axiosInstance.get('/auth/profile'),
 
   // Logout
