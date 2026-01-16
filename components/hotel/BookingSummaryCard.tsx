@@ -76,7 +76,7 @@ export default function BookingSummaryCard({
             {/* Reserve button */}
             <Link
                 href="/checkout/details"
-                className="block w-full py-3 rounded-lg text-white font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all text-center"
+                className="block w-full py-3 rounded-lg text-accent font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all text-center"
                 style={{ fontFamily: 'var(--font-display)', backgroundColor: 'var(--color-form)', fontSize: 'var(--fs-h5)' }}
             >
                 Reserve
