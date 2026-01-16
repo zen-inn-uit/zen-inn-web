@@ -1,148 +1,128 @@
-import Navbar from "@/components/ui/navbar";
-import ChatButton from "@/components/ui/chat-button";
-import SearchBarActions from "@/components/helpers/search-bar-actions";
-import SearchResults from "@/components/search/SearchResults";
+'use client';
 
-const mockHotels = [
-    {
-        id: "1",
-        name: "Zen Inn Luxury Resort",
-        location: "Bali, Indonesia",
-        image: "/auth-bg.png", // Using existing image as placeholder
-        pricePerNight: 125,
-        totalPrice: 375,
-        rating: 4.8,
-        reviewCount: 234,
-        tags: ["Breakfast included", "Free cancellation"],
-        nights: 3
-    },
-    {
-        id: "2",
-        name: "Serenity Beach Hotel",
-        location: "Phuket, Thailand",
-        image: "/auth-bg.png",
-        pricePerNight: 95,
-        totalPrice: 285,
-        rating: 4.6,
-        reviewCount: 189,
-        tags: ["WiFi", "Pool", "Free cancellation"],
-        nights: 3
-    },
-    {
-        id: "3",
-        name: "Mountain View Villa",
-        location: "Kyoto, Japan",
-        image: "/auth-bg.png",
-        pricePerNight: 145,
-        totalPrice: 435,
-        rating: 4.9,
-        reviewCount: 312,
-        tags: ["Breakfast included", "Spa"],
-        nights: 3
-    },
-    {
-        id: "4",
-        name: "Coastal Paradise Resort",
-        location: "Maldives",
-        image: "/auth-bg.png",
-        pricePerNight: 220,
-        totalPrice: 660,
-        rating: 4.7,
-        reviewCount: 156,
-        tags: ["Breakfast included", "Pool", "Gym", "Free cancellation"],
-        nights: 3
-    },
-    {
-        id: "5",
-        name: "Urban Zen Hotel",
-        location: "Tokyo, Japan",
-        image: "/auth-bg.png",
-        pricePerNight: 110,
-        totalPrice: 330,
-        rating: 4.5,
-        reviewCount: 278,
-        tags: ["WiFi", "Gym", "Parking"],
-        nights: 3
-    },
-    {
-        id: "6",
-        name: "Tropical Garden Resort",
-        location: "Phuket, Thailand",
-        image: "/auth-bg.png",
-        pricePerNight: 85,
-        totalPrice: 255,
-        rating: 4.4,
-        reviewCount: 142,
-        tags: ["Breakfast included", "Pool", "WiFi"],
-        nights: 3
-    },
-    {
-        id: "7",
-        name: "Riverside Retreat",
-        location: "Kyoto, Japan",
-        image: "/auth-bg.png",
-        pricePerNight: 130,
-        totalPrice: 390,
-        rating: 4.8,
-        reviewCount: 201,
-        tags: ["Breakfast included", "Spa", "Free cancellation"],
-        nights: 3
-    },
-    {
-        id: "8",
-        name: "Luxury Spa Resort",
-        location: "Bali, Indonesia",
-        image: "/auth-bg.png",
-        pricePerNight: 165,
-        totalPrice: 495,
-        rating: 4.9,
-        reviewCount: 298,
-        tags: ["Breakfast included", "Spa", "Pool", "Gym"],
-        nights: 3
-    }
-];
+import React, { Suspense, useState } from 'react';
+import { Header } from '../../components/home/Header';
+import { SearchSection } from '../../components/home/SearchSection';
+import { listings } from '../../data/mock';
+import { Listing } from '../../types/home';
+import { PropertyCard } from '../../components/home/PropertyCard';
+import { ListingPopup } from '../../components/home/ListingPopup';
+import FilterSidebar from '../../components/search/FilterSidebar';
 
-export default async function SearchPage({searchParams}: {searchParams: Promise<{location?: string, dateFrom?: string, dateTo?: string, guests?: string}>}) {
-    const params = await searchParams;
+export default function SearchPage() {
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [hoverTimer, setHoverTimer] = useState<NodeJS.Timeout | null>(null);
+  const [closeTimer, setCloseTimer] = useState<NodeJS.Timeout | null>(null);
 
-    return (
-        <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
-            <header>
-                <Navbar />
-            </header>
+  const handleMouseEnter = (listing: Listing, e: React.MouseEvent) => {
+    if (closeTimer) clearTimeout(closeTimer);
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const windowWidth = window.innerWidth;
+    const popupWidth = 400;
+    
+    const spaceOnRight = windowWidth - rect.right;
+    const showOnLeft = spaceOnRight < popupWidth + 20;
+    
+    const x = showOnLeft ? rect.left - popupWidth - 10 : rect.right + 10;
+    const y = rect.top;
+    
+    if (hoverTimer) clearTimeout(hoverTimer);
+    
+    const timer = setTimeout(() => {
+      setSelectedListing({ ...listing, position: { x, y } });
+    }, 1000);
+    setHoverTimer(timer);
+  };
 
-            <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
-                <div className="mb-6">
-                    <div className="m-2 flex justify-center items-center space-x-20">
-                        <h3 className="font-display text-brand text-2xl">
-                            Where do you want to stay?
-                        </h3>
-                    <SearchBarActions location={params.location} dateFrom={params.dateFrom} dateTo={params.dateTo} guests={params.guests} />
-                </div>
-                </div>
+  const handleMouseLeave = () => {
+    if (hoverTimer) clearTimeout(hoverTimer);
+    
+    const timer = setTimeout(() => {
+      setSelectedListing(null);
+    }, 200);
+    setCloseTimer(timer);
+  };
 
-                <SearchResults hotels={mockHotels} />
-            </main>
+  const handlePopupMouseEnter = () => {
+    if (closeTimer) clearTimeout(closeTimer);
+  };
 
-            <footer id="footer" className="py-12 px-6 mt-20 bg-brand/10">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex justify-between md:flex-row flex-col items-center md:items-start space-y-6 md:space-y-0">
-                        <div className="flex flex-col items-center md:items-start space-y-6">
-                            <p className="text-accent" style={{ fontFamily: 'var(--font-body)' }}>
-                                Find the true pleasure in life
-                            </p>
-                        </div>
-                    </div>
-                    <div className="border-t-2 border-[var(--color-primary)] mt-10 pt-4 text-center">
-                        <p className="text-secondary" style={{ fontFamily: 'var(--font-body)' }}>
-                            &copy; {new Date().getFullYear()} Zen Inn. Powered by <span className="text-accent">Group 15</span>.<br />All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+  return (
+    <div style={{
+      fontFamily: "'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      background: '#F7F7F7',
+      minHeight: '100vh',
+      padding: '20px'
+    }}>
+      {/* Main Container */}
+      <div style={{
+        maxWidth: '1440px',
+        margin: '0 auto',
+        background: '#FFFFFF',
+        borderRadius: '24px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        overflow: 'hidden'
+      }}>
+        <Header />
+        <Suspense fallback={<div style={{ padding: '24px 40px' }}>Loading search...</div>}>
+          <SearchSection />
+        </Suspense>
+        
+        <div style={{ display: 'flex', padding: '40px', gap: '40px' }}>
+          {/* Left Sidebar - Filters */}
+          <div style={{ width: '320px', flexShrink: 0 }}>
+            <FilterSidebar />
+          </div>
 
-            <ChatButton />
+          {/* Right Content - Results */}
+          <div style={{ flex: 1 }}>
+            <div style={{ marginBottom: '24px' }}>
+              <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#222222', margin: 0 }}>
+                {listings.length} stays found
+              </h1>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '24px'
+            }}>
+              {listings.map((listing) => (
+                <PropertyCard
+                  key={listing.id}
+                  listing={listing}
+                  onMouseEnter={(e) => handleMouseEnter(listing, e)}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={() => window.location.href = `/hotels/${listing.slug}`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
-    );
-}
+      </div>
 
+      {selectedListing && (
+        <ListingPopup
+          listing={selectedListing}
+          onClose={() => setSelectedListing(null)}
+          onMouseEnter={handlePopupMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        />
+      )}
+
+      <style jsx>{`
+        @keyframes popupFadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
