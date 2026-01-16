@@ -1,11 +1,14 @@
 "use client";
 
+export type ProfileTab = "personal-details" | "security-settings" | "preferences" | "payment-methods";
+
 interface ProfileSidebarProps {
-    activeItem?: string;
+    activeTab: ProfileTab;
+    onTabChange: (tab: ProfileTab) => void;
 }
 
-export default function ProfileSidebar({ activeItem = "personal-details" }: ProfileSidebarProps) {
-    const menuItems = [
+export default function ProfileSidebar({ activeTab, onTabChange }: ProfileSidebarProps) {
+    const menuItems: { id: ProfileTab; label: string }[] = [
         { id: "personal-details", label: "Personal details" },
         { id: "security-settings", label: "Security settings" },
         { id: "preferences", label: "Preferences" },
@@ -13,7 +16,7 @@ export default function ProfileSidebar({ activeItem = "personal-details" }: Prof
     ];
 
     return (
-        <div 
+        <div
             className="rounded-[28px] border backdrop-blur-sm shadow-md p-4 w-full md:w-[280px] flex-shrink-0"
             style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.28)',
@@ -22,11 +25,12 @@ export default function ProfileSidebar({ activeItem = "personal-details" }: Prof
         >
             <nav className="flex flex-col gap-2">
                 {menuItems.map((item) => {
-                    const isActive = item.id === activeItem;
+                    const isActive = item.id === activeTab;
                     return (
                         <button
                             key={item.id}
                             type="button"
+                            onClick={() => onTabChange(item.id)}
                             className={`px-4 py-3 rounded-lg text-left transition-colors ${
                                 isActive
                                     ? "bg-white/20 border border-white/30 font-bold"
