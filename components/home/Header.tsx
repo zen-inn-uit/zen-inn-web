@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Globe, Menu, User } from 'lucide-react';
+import Link from 'next/link';
 
 export const Header = () => {
   return (
@@ -43,17 +44,20 @@ export const Header = () => {
           cursor: 'pointer'
         }}>
           <Menu size={16} />
-          <div style={{
-            background: '#6B5B3D',
-            borderRadius: '50%',
-            width: '30px',
-            height: '30px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <User size={18} color="white" />
-          </div>
+          <Link href="/profile">
+            <div style={{
+              background: '#6B5B3D',
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <User size={18} color="white" />
+            </div>
+          </Link>
+          
         </div>
       </div>
     </header>
