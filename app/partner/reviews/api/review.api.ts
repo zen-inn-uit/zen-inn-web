@@ -2,19 +2,35 @@ import type {
   ReviewStatsDTO, 
   RatingBreakdownDTO, 
   CountryReviewDTO, 
-  ReviewItemDTO 
+  ReviewItemDTO,
+  ReviewsResponseDTO,
+  QueryReviewsDTO,
 } from '../dto/review.dto';
+import axiosInstance from '@/lib/api/axios';
+import { buildUrlWithParams } from '@/lib/api/url-utils';
 
 export const reviewsApi = {
+  // Get review statistics
   getStats: async (): Promise<ReviewStatsDTO> => {
+    const stats = await axiosInstance.get<any, { totalReviews: number; averageRating: number; ratingBreakdown: Array<{ rating: number; count: number }> }>('/partners/reviews/stats');
+    
+    // Calculate positive/negative from breakdown
+    const positive = stats.ratingBreakdown
+      .filter(r => r.rating >= 4)
+      .reduce((sum, r) => sum + r.count, 0);
+    const negative = stats.ratingBreakdown
+      .filter(r => r.rating <= 2)
+      .reduce((sum, r) => sum + r.count, 0);
+
     return {
-      positive: 1560,
-      negative: 230,
-      overallRating: 4.6,
-      totalReviews: 2546
+      positive,
+      negative,
+      overallRating: stats.averageRating,
+      totalReviews: stats.totalReviews,
     };
   },
 
+  // Get rating breakdown (mock for now - can be enhanced later)
   getRatingBreakdown: async (): Promise<RatingBreakdownDTO[]> => {
     return [
       { label: 'Facilities', score: 4.4 },
@@ -25,6 +41,7 @@ export const reviewsApi = {
     ];
   },
 
+  // Get country reviews (mock for now)
   getCountryReviews: async (): Promise<CountryReviewDTO[]> => {
     return [
       { country: 'Vietnam', percentage: 25, count: 640, lat: 21.0285, lng: 105.8542 },
@@ -36,10 +53,14 @@ export const reviewsApi = {
     ];
   },
 
-  getRecentReviews: async (): Promise<ReviewItemDTO[]> => {
-    return [
-      { id: '1', guest: 'John Doe', rating: 5, comment: 'Excellent stay!', date: '2024-06-15' },
-      { id: '2', guest: 'Jane Smith', rating: 4, comment: 'Very clean and comfortable.', date: '2024-06-14' },
-    ];
-  }
+  // Get reviews with filters
+  getReviews: async (query?: QueryReviewsDTO): Promise<ReviewsResponseDTO> => {
+    const url = buildUrlWithParams('/partners/reviews', query as Record<string, string | number | boolean | undefined | null>);
+    return axiosInstance.get<any, ReviewsResponseDTO>(url);
+  },
+
+  // Reply to a review
+  replyToReview: async (id: string, reply: string): Promise<ReviewItemDTO> => {
+    return axiosInstance.patch<any, ReviewItemDTO>(`/partners/reviews/${id}/reply`, { reply });
+  },
 };

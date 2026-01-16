@@ -20,8 +20,40 @@ export interface CountryReviewDTO {
 
 export interface ReviewItemDTO {
   id: string;
-  guest: string;
-  rating: number;
-  comment: string;
-  date: string;
+  guest: {
+    name: string;
+    email: string;
+    avatar?: string;
+    country?: string;
+  };
+  hotel: {
+    id: string;
+    name: string;
+  };
+  room?: {
+    id: string;
+    name: string;
+  };
+  rating: number;          // 1-5 stars
+  comment?: string;
+  reply?: string;
+  repliedAt?: string;
+  date: string;            // Review date (createdAt)
+  bookingId: string;
 }
+
+export interface ReviewsResponseDTO {
+  data: ReviewItemDTO[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface QueryReviewsDTO {
+  rating?: number;
+  hotelId?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
