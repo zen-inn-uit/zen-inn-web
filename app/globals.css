@@ -5,16 +5,18 @@
 @layer base {
   :root {
     /* Zen Inn theme - Brown primary */
-    --color-brand: #6B5B3D;
-    --color-primary: #6B5B3D;
+    --color-brand: #6b5b3d;
+    --color-primary: #6b5b3d;
     --color-secondary: #717171;
-    --color-accent: #C9A882;
-    --color-bg-light: #F9FAFB;
-    --color-bg-cream: #FFFFFF;
-    
+    --color-accent: #c9a882;
+    --color-bg-light: #f9fafb;
+    --color-bg-cream: #ffffff;
+
     /* Fonts */
-    --font-display: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-display:
+      "Segoe UI", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-body:
+      "Segoe UI", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
     /* Font sizes (px) */
     --fs-body: 14px;
@@ -133,7 +135,7 @@ body {
 }
 
 button {
-  border: 1px solid #DDDDDD;
+  border: 1px solid #dddddd;
   padding: 4px 16px;
   border-radius: 10px;
   cursor: pointer;
@@ -143,7 +145,7 @@ button {
 button.light {
   background-color: white;
   color: #222222;
-  border-color: #DDDDDD;
+  border-color: #dddddd;
 }
 
 button.light:hover {
@@ -163,11 +165,11 @@ button.dark:hover {
 button.transparent {
   background-color: transparent;
   color: #222222;
-  border-color: #DDDDDD;
+  border-color: #dddddd;
 }
 
 button.transparent:hover {
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
   border-color: #222222;
 }
 
@@ -182,7 +184,116 @@ button.primary:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
 }
 
-
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Global Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Utility animation classes */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.4s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.animate-popup {
+  animation: popupFadeIn 0.2s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
 }
