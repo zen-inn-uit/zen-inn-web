@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Header } from '../components/home/Header';
+import Navbar from '../components/ui/navbar';
 import { SearchSection } from '../components/home/SearchSection';
 import { QuickPlanning } from '../components/home/QuickPlanning';
 import { ListingGrid } from '../components/home/ListingGrid';
@@ -28,7 +28,7 @@ export default function Home() {
         boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
         overflow: 'hidden'
       }}>
-        <Header />
+        <Navbar showSearch={false} />
         <Suspense fallback={null}>
           <SearchSection />
         </Suspense>
