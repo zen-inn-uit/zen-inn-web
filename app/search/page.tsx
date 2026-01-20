@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Suspense, useState } from 'react';
-import { Header } from '../../components/home/Header';
+import Navbar from '../../components/ui/navbar';
 import { SearchSection } from '../../components/home/SearchSection';
 import { listings } from '../../data/mock';
 import { Listing } from '../../types/home';
@@ -64,7 +64,7 @@ export default function SearchPage() {
         boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
         overflow: 'hidden'
       }}>
-        <Header />
+        <Navbar showSearch={false} />
         <Suspense fallback={<div style={{ padding: '24px 40px' }}>Loading search...</div>}>
           <SearchSection />
         </Suspense>
