@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import MiniMap from "./MiniMap";
 
 interface FilterSidebarProps {
     className?: string;
@@ -31,9 +30,6 @@ export default function FilterSidebar({ className = "" }: FilterSidebarProps) {
 
     return (
         <aside className={`bg-gray-50 rounded-xl p-6 h-fit sticky top-4 ${className}`} style={{ fontFamily: 'var(--font-body)' }}>
-            {/* Mini map section */}
-            <MiniMap />
-
             <h2 className="text-xl font-bold mb-6" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
                 Filters
             </h2>

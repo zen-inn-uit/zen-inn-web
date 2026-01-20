@@ -8,6 +8,7 @@ interface RoomCardProps {
     pricePerNight: number;
     totalPrice: number;
     nights: number;
+    onSelect?: () => void;
 }
 
 export default function RoomCard({
@@ -17,7 +18,8 @@ export default function RoomCard({
     cancellationPolicy,
     pricePerNight,
     totalPrice,
-    nights
+    nights,
+    onSelect
 }: RoomCardProps) {
     return (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -42,10 +44,10 @@ export default function RoomCard({
                         </div>
                     </div>
                     <span
-                        className="inline-block px-2 py-1 bg-secondary/50 rounded-md text-xs"
-                        style={{ fontFamily: 'var(--font-body)', color: 'var(--color-form)' }}
+                        className="inline-block px-2 py-1 bg-green-50 text-green-600 rounded-md text-xs font-medium"
+                        style={{ fontFamily: 'var(--font-body)' }}
                     >
-                        {cancellationPolicy}
+                        ✓ {cancellationPolicy}
                     </span>
                 </div>
 
@@ -64,8 +66,14 @@ export default function RoomCard({
                     </div>
                     <button
                         type="button"
-                        className="px-6 py-2 rounded-lg text-accent font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all"
-                        style={{ fontFamily: 'var(--font-display)', backgroundColor: 'var(--color-form)', fontSize: 'var(--fs-h5)' }}
+                        onClick={onSelect}
+                        className="px-6 py-2.5 rounded-lg text-white font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all shadow-md hover:shadow-lg"
+                        style={{ 
+                            fontFamily: 'var(--font-display)', 
+                            backgroundColor: 'var(--color-primary)',
+                            fontSize: '14px',
+                            boxShadow: '0 2px 4px rgba(107, 91, 61, 0.2)'
+                        }}
                     >
                         Select
                     </button>
@@ -74,4 +82,3 @@ export default function RoomCard({
         </div>
     );
 }
-

@@ -14,9 +14,10 @@ interface Room {
 
 interface RoomListProps {
     rooms: Room[];
+    onSelectRoom?: (roomIndex: number) => void;
 }
 
-export default function RoomList({ rooms }: RoomListProps) {
+export default function RoomList({ rooms, onSelectRoom }: RoomListProps) {
     return (
         <div className="mb-8">
             <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
@@ -33,10 +34,10 @@ export default function RoomList({ rooms }: RoomListProps) {
                         pricePerNight={room.pricePerNight}
                         totalPrice={room.totalPrice}
                         nights={room.nights}
+                        onSelect={() => onSelectRoom?.(index)}
                     />
                 ))}
             </div>
         </div>
     );
 }
-

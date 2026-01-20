@@ -1,32 +1,84 @@
 "use client";
 
-import Image from "next/image";
+import { useState } from "react";
 
-export default function MiniMap() {
+interface MiniMapProps {
+    hotelName?: string;
+    address?: string;
+    city?: string;
+    country?: string;
+}
+
+export default function MiniMap({ 
+    hotelName = "Zen Inn Luxury Resort",
+    address = "Bali",
+    city = "Bali",
+    country = "Indonesia"
+}: MiniMapProps) {
+    const [isMapExpanded, setIsMapExpanded] = useState(false);
+    
+    // Create search query for Google Maps
+    const fullAddress = `${hotelName}, ${address}, ${city}, ${country}`;
+    const encodedAddress = encodeURIComponent(fullAddress);
+    const mapEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodedAddress}&zoom=15`;
+    const mapLinkUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+
     return (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6" style={{ height: '200px', position: 'relative' }}>
-            {/* Map placeholder image */}
-            <div className="relative w-full h-full bg-gray-100">
-                <Image
-                    src="/map-placeholder.png"
-                    alt="Map view"
-                    fill
-                    className="object-cover"
-                    sizes="320px"
-                />
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden" style={{ height: isMapExpanded ? '400px' : '280px', position: 'relative', transition: 'height 0.3s ease' }}>
+            {/* Google Maps iframe */}
+            <iframe
+                src={mapEmbedUrl}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title={`Map showing ${hotelName}`}
+            />
+
+            {/* Location info overlay */}
+            <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md max-w-[calc(100%-2rem)]">
+                <h3 className="font-bold text-sm" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
+                    {hotelName}
+                </h3>
+                <p className="text-xs text-gray-600 mt-1" style={{ fontFamily: 'var(--font-body)' }}>
+                    {address}, {city}
+                </p>
             </div>
 
-            {/* "Google" label overlay bottom-left */}
-            <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium text-gray-600 shadow-sm" style={{ fontFamily: 'var(--font-body)' }}>
-                Google
-            </div>
-
-            {/* Centered "Show on map" button with pin icon */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            {/* Action buttons overlay */}
+            <div className="absolute bottom-4 right-4 flex gap-2">
+                {/* Expand/Collapse button */}
                 <button
                     type="button"
-                    className="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow flex items-center gap-2 border border-gray-200 pointer-events-auto"
-                    style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-body)' }}
+                    onClick={() => setIsMapExpanded(!isMapExpanded)}
+                    className="bg-white px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+                    style={{ fontFamily: 'var(--font-body)', fontSize: '12px' }}
+                    title={isMapExpanded ? "Collapse map" : "Expand map"}
+                >
+                    <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        style={{ color: 'var(--color-primary)' }}
+                    >
+                        {isMapExpanded ? (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25" />
+                        ) : (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                        )}
+                    </svg>
+                </button>
+
+                {/* View on Google Maps button */}
+                <a
+                    href={mapLinkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow flex items-center gap-2 border border-gray-200"
+                    style={{ fontFamily: 'var(--font-body)', fontSize: '12px' }}
                 >
                     {/* Pin icon */}
                     <svg
@@ -41,10 +93,9 @@ export default function MiniMap() {
                             clipRule="evenodd"
                         />
                     </svg>
-                    <span style={{ color: 'var(--color-form)', fontWeight: 500 }}>Show on map</span>
-                </button>
+                    <span style={{ color: 'var(--color-primary)', fontWeight: 500 }}>View on Maps</span>
+                </a>
             </div>
         </div>
     );
 }
-
