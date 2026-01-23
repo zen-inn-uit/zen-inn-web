@@ -1,6 +1,7 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/ui/navbar";
 import ChatButton from "@/components/ui/chat-button";
 import MiniMap from "@/components/search/MiniMap";
@@ -11,124 +12,46 @@ import RoomList from "@/components/hotel/RoomList";
 import HotelPolicies from "@/components/hotel/HotelPolicies";
 import HotelReviews from "@/components/hotel/HotelReviews";
 import { ImageViewer } from "@/components/ui/image-viewer";
-import { useState } from "react";
-
-const getMockHotel = (hotelId: string) => {
-    const images = ["/auth-bg.png", "/auth-bg.png", "/auth-bg.png", "/auth-bg.png", "/auth-bg.png"];
-    
-    return {
-        id: hotelId,
-        name: "Zen Inn Luxury Resort",
-        location: "Bali, Indonesia",
-        address: "Jl. Raya Ubud No. 88",
-        city: "Ubud, Bali",
-        country: "Indonesia",
-        images,
-        rating: 4.8,
-        reviewCount: 234,
-        pricePerNight: 125,
-        totalPrice: 375,
-        nights: 3,
-        description: "Experience the perfect blend of luxury and tranquility at Zen Inn Luxury Resort. Nestled in the heart of Bali, our resort offers breathtaking views, world-class amenities, and exceptional service. Each room is thoughtfully designed to provide comfort and serenity, making your stay unforgettable.",
-        facilities: [
-            "Breakfast included",
-            "Free WiFi",
-            "Swimming pool",
-            "Spa & Wellness",
-            "Fitness center",
-            "Parking",
-            "Airport shuttle",
-            "24/7 Reception"
-        ],
-        highlights: [
-            "Beach front",
-            "Free parking",
-            "Family rooms",
-            "Non-smoking rooms"
-        ],
-        rooms: [
-            {
-                name: "Deluxe Room",
-                bedInfo: "1 King bed",
-                capacity: "2 guests",
-                cancellationPolicy: "Free cancellation",
-                pricePerNight: 125,
-                totalPrice: 375,
-                nights: 3
-            },
-            {
-                name: "Superior Suite",
-                bedInfo: "1 King bed, Sofa bed",
-                capacity: "4 guests",
-                cancellationPolicy: "Free cancellation",
-                pricePerNight: 185,
-                totalPrice: 555,
-                nights: 3
-            },
-            {
-                name: "Ocean View Villa",
-                bedInfo: "1 King bed, 1 Queen bed",
-                capacity: "4 guests",
-                cancellationPolicy: "Non-refundable",
-                pricePerNight: 280,
-                totalPrice: 840,
-                nights: 3
-            },
-            {
-                name: "Presidential Suite",
-                bedInfo: "2 King beds",
-                capacity: "6 guests",
-                cancellationPolicy: "Free cancellation",
-                pricePerNight: 450,
-                totalPrice: 1350,
-                nights: 3
-            },
-            {
-                name: "Garden Bungalow",
-                bedInfo: "1 Queen bed",
-                capacity: "2 guests",
-                cancellationPolicy: "Free cancellation",
-                pricePerNight: 95,
-                totalPrice: 285,
-                nights: 3
-            }
-        ],
-        reviews: [
-            {
-                name: "Sarah Johnson",
-                country: "United States",
-                rating: 5.0,
-                text: "Absolutely stunning resort! The staff was incredibly welcoming and the facilities were top-notch. The breakfast was delicious and the pool area was perfect for relaxation. Highly recommend!",
-                date: "2 weeks ago"
-            },
-            {
-                name: "Michael Chen",
-                country: "Singapore",
-                rating: 4.5,
-                text: "Great location and beautiful views. The room was spacious and clean. Only minor issue was the WiFi speed in some areas, but overall a wonderful stay.",
-                date: "1 month ago"
-            },
-            {
-                name: "Emma Thompson",
-                country: "Australia",
-                rating: 5.0,
-                text: "Perfect getaway destination! The spa services were amazing and the food was exceptional. The staff went above and beyond to make our anniversary special. Will definitely return!",
-                date: "3 weeks ago"
-            }
-        ],
-        checkIn: "2024-12-15",
-        checkOut: "2024-12-18",
-        guests: "2 guests, 1 room"
-    };
-};
+import { hotelApi, HotelDetailResponse } from "@/lib/api/hotel-api";
 
 export default function HotelDetailPage() {
     const params = useParams();
+    const searchParams = useSearchParams();
     const hotelId = params.hotelId as string;
-    const hotel = getMockHotel(hotelId);
+    
+    const [hotelData, setHotelData] = useState<HotelDetailResponse | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [showAllPhotos, setShowAllPhotos] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedRoomIndex, setSelectedRoomIndex] = useState(0);
+
+    useEffect(() => {
+        const fetchHotelDetail = async () => {
+            try {
+                setLoading(true);
+                const checkIn = searchParams.get('checkIn') || undefined;
+                const checkOut = searchParams.get('checkOut') || undefined;
+                const adults = searchParams.get('adults') ? parseInt(searchParams.get('adults')!) : undefined;
+                const rooms = searchParams.get('rooms') ? parseInt(searchParams.get('rooms')!) : undefined;
+
+                const data = await hotelApi.getHotelDetail(hotelId, {
+                    checkIn,
+                    checkOut,
+                    adults,
+                    rooms,
+                });
+                setHotelData(data);
+            } catch (err: any) {
+                console.error('Failed to fetch hotel detail:', err);
+                setError(err.message || 'Failed to load hotel details');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchHotelDetail();
+    }, [hotelId, searchParams]);
 
     const handleSelectRoom = (roomIndex: number) => {
         setSelectedRoomIndex(roomIndex);
@@ -139,6 +62,53 @@ export default function HotelDetailPage() {
         setShowAllPhotos(true);
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-white">
+                <header>
+                    <Navbar showSearch={false} />
+                </header>
+                <main className="max-w-[1140px] mx-auto px-4 md:px-6 pt-24">
+                    <div className="flex items-center justify-center h-64">
+                        <div className="text-center">
+                            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#6B5B3D]"></div>
+                            <p className="mt-4 text-gray-600">Đang tải thông tin khách sạn...</p>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    if (error || !hotelData) {
+        return (
+            <div className="min-h-screen bg-white">
+                <header>
+                    <Navbar showSearch={false} />
+                </header>
+                <main className="max-w-[1140px] mx-auto px-4 md:px-6 pt-24">
+                    <div className="text-center py-12">
+                        <h1 className="text-2xl font-bold text-gray-800 mb-4">Không tìm thấy khách sạn</h1>
+                        <p className="text-gray-600">{error || 'Khách sạn này không tồn tại hoặc đã bị xóa.'}</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    const { hotel, rooms: hotelRooms } = hotelData;
+
+    // Transform rooms for components that expect the old format
+    const transformedRooms = hotelRooms.map(room => ({
+        name: room.roomName,
+        bedInfo: room.bedInfo || 'N/A',
+        capacity: `${room.maxGuests} guests`,
+        cancellationPolicy: room.refundable ? 'Free cancellation' : room.cancellationPolicyText || 'Non-refundable',
+        pricePerNight: room.pricePerNight || 0,
+        totalPrice: (room.pricePerNight || 0) * 3, // TODO: Calculate based on actual nights
+        nights: 3, // TODO: Get from search params
+    }));
+
     return (
         <div className="min-h-screen bg-white">
             <header>
@@ -148,35 +118,35 @@ export default function HotelDetailPage() {
             <main>
                 {/* Breadcrumbs */}
                 <div className="max-w-[1140px] mx-auto px-4 md:px-6 pt-4">
-                    <Breadcrumbs hotelName={hotel.name} location={hotel.location} />
+                    <Breadcrumbs hotelName={hotel.name} location={`${hotel.city}, ${hotel.country || ''}`} />
                 </div>
 
                 {/* Photo Gallery - Booking.com style */}
-                <div className="max-w-[1140px] mx-auto px-4 md:px-6 mt-4">
+                <div className="max-w-[1140px] mx-auto px-4 md:px-6 mt-4 animate-fade-in">
                     <div className="grid grid-cols-4 gap-2 h-[420px] rounded-lg overflow-hidden">
                         {/* Main large photo - left side */}
-                        <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => handleImageClick(0)}>
+                        <div className="col-span-2 row-span-2 relative group cursor-pointer image-hover-zoom" onClick={() => handleImageClick(0)}>
                             <img 
                                 src={hotel.images[0]} 
                                 alt={hotel.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover transition-transform duration-500"
                             />
                             <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
                         </div>
                         
                         {/* Right side - 4 smaller photos in 2x2 grid */}
                         {hotel.images.slice(1, 5).map((img, idx) => (
-                            <div key={idx} className="relative group cursor-pointer" onClick={() => handleImageClick(idx + 1)}>
+                            <div key={idx} className="relative group cursor-pointer image-hover-zoom" onClick={() => handleImageClick(idx + 1)}>
                                 <img 
                                     src={img} 
                                     alt={`${hotel.name} - ${idx + 2}`}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover transition-transform duration-500"
                                 />
                                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
                                 {idx === 3 && (
                                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                                         <button 
-                                            className="bg-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-gray-100 transition-colors"
+                                            className="bg-white px-4 py-2 rounded-md text-sm font-semibold button-hover-lift transition-all"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setShowAllPhotos(true);
@@ -197,15 +167,15 @@ export default function HotelDetailPage() {
                         {/* Left column - Main content */}
                         <div className="flex-1 min-w-0">
                             {/* Title and rating */}
-                            <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-start justify-between mb-4 animate-fade-in-up">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="bg-[#003B95] text-white px-2 py-1 rounded text-xs font-bold">
+                                        <span className="bg-[#003B95] text-white px-2 py-1 rounded text-xs font-bold animate-scale-in">
                                             Hotel
                                         </span>
                                         <div className="flex">
                                             {[...Array(5)].map((_, i) => (
-                                                <svg key={i} className="w-4 h-4 text-[#FEBB02]" fill="currentColor" viewBox="0 0 20 20">
+                                                <svg key={i} className="w-4 h-4 text-[#FEBB02] transition-transform hover:scale-125" fill="currentColor" viewBox="0 0 20 20">
                                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                 </svg>
                                             ))}
@@ -215,14 +185,14 @@ export default function HotelDetailPage() {
                                         {hotel.name}
                                     </h1>
                                     <p className="text-sm mb-2" style={{ color: '#006CE4' }}>
-                                        📍 {hotel.address}, {hotel.city} - <span className="underline cursor-pointer">Show on map</span>
+                                        📍 {hotel.address}, {hotel.city} - <span className="underline cursor-pointer hover:text-[#0057B8] transition-colors">Show on map</span>
                                     </p>
                                 </div>
                                 <WishlistButton />
                             </div>
 
                             {/* Description */}
-                            <div className="mb-8">
+                            <div className="mb-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                                 <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: '#262626' }}>
                                     About this property
                                 </h2>
@@ -232,13 +202,13 @@ export default function HotelDetailPage() {
                             </div>
 
                             {/* Facilities */}
-                            <div className="mb-8 pb-8 border-b border-gray-200">
+                            <div className="mb-8 pb-8 border-b border-gray-200 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                                 <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: '#262626' }}>
                                     Most popular facilities
                                 </h2>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 stagger-fade-in">
                                     {hotel.facilities.map((facility, index) => (
-                                        <div key={index} className="flex items-center gap-2 text-sm">
+                                        <div key={index} className="flex items-center gap-2 text-sm transition-smooth hover:translate-x-1">
                                             <svg className="w-5 h-5 text-[#008009]" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                             </svg>
@@ -250,15 +220,15 @@ export default function HotelDetailPage() {
 
                             {/* Rooms section */}
                             <div className="mb-8">
-                                <RoomList rooms={hotel.rooms} onSelectRoom={handleSelectRoom} />
+                                <RoomList rooms={transformedRooms} onSelectRoom={handleSelectRoom} />
                             </div>
 
                             {/* Reviews */}
                             <div className="mb-8">
                                 <HotelReviews
-                                    overallRating={hotel.rating}
+                                    overallRating={hotel.rating || 0}
                                     reviewCount={hotel.reviewCount}
-                                    reviews={hotel.reviews}
+                                    reviews={[]}
                                 />
                             </div>
 
@@ -276,7 +246,7 @@ export default function HotelDetailPage() {
                                     hotelName={hotel.name}
                                     address={hotel.address}
                                     city={hotel.city}
-                                    country={hotel.country}
+                                    country={hotel.country || ''}
                                 />
                             </div>
                         </div>
@@ -285,11 +255,11 @@ export default function HotelDetailPage() {
                         <div className="hidden lg:block w-[380px] flex-shrink-0">
                             <div className="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
                                 <BookingSummaryCard
-                                    rooms={hotel.rooms}
-                                    nights={hotel.nights}
-                                    checkIn={hotel.checkIn}
-                                    checkOut={hotel.checkOut}
-                                    guests={hotel.guests}
+                                    rooms={transformedRooms}
+                                    nights={3}
+                                    checkIn={searchParams.get('checkIn') || ''}
+                                    checkOut={searchParams.get('checkOut') || ''}
+                                    guests={`${searchParams.get('adults') || 2} guests, ${searchParams.get('rooms') || 1} room`}
                                     selectedRoomIndex={selectedRoomIndex}
                                     onRoomChange={setSelectedRoomIndex}
                                 />
@@ -321,7 +291,7 @@ export default function HotelDetailPage() {
                 currentIndex={currentImageIndex}
                 onIndexChange={setCurrentImageIndex}
                 title={hotel.name}
-                description={hotel.location}
+                description={`${hotel.city}, ${hotel.country || ''}`}
             />
         </div>
     );
