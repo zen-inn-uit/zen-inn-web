@@ -24,10 +24,15 @@ export const SearchSection = () => {
   }, [searchParams]);
 
   const handleSearch = () => {
+    if (!formData.location || !formData.checkIn || !formData.checkOut) {
+      alert('Vui lòng nhập đầy đủ địa điểm, ngày nhận phòng và ngày trả phòng');
+      return;
+    }
+
     const params = new URLSearchParams();
-    if (formData.location) params.set('location', formData.location);
-    if (formData.checkIn) params.set('checkIn', formData.checkIn);
-    if (formData.checkOut) params.set('checkOut', formData.checkOut);
+    params.set('location', formData.location);
+    params.set('checkIn', formData.checkIn);
+    params.set('checkOut', formData.checkOut);
     if (formData.guests) params.set('guests', formData.guests);
     if (formData.rooms) params.set('rooms', formData.rooms);
     
@@ -54,94 +59,119 @@ export const SearchSection = () => {
         background: 'white'
       }}>
         {/* Location */}
-        <input
-          type="text"
-          placeholder="Where are you going?"
-          value={formData.location}
-          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-          style={{
-            border: 'none',
-            outline: 'none',
-            fontSize: '14px',
-            color: '#222222',
-            background: 'transparent',
-            minWidth: '200px'
-          }}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label style={{ fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: '#222222', marginBottom: '4px' }}>
+            Location *
+          </label>
+          <input
+            type="text"
+            placeholder="Where are you going?"
+            value={formData.location}
+            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+            style={{
+              border: 'none',
+              outline: 'none',
+              fontSize: '14px',
+              color: '#222222',
+              background: 'transparent',
+              minWidth: '200px'
+            }}
+          />
+        </div>
 
         <div style={{ width: '1px', height: '40px', background: '#EBEBEB' }}></div>
 
         {/* Check-in */}
-        <input
-          type="date"
-          placeholder="Check-in"
-          value={formData.checkIn}
-          onChange={(e) => setFormData({ ...formData, checkIn: e.target.value })}
-          style={{
-            border: 'none',
-            outline: 'none',
-            fontSize: '14px',
-            color: '#222222',
-            background: 'transparent',
-            minWidth: '140px'
-          }}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label style={{ fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: '#222222', marginBottom: '4px' }}>
+            Check-in *
+          </label>
+          <input
+            type="date"
+            placeholder="Check-in"
+            value={formData.checkIn}
+            onChange={(e) => setFormData({ ...formData, checkIn: e.target.value })}
+            style={{
+              border: 'none',
+              outline: 'none',
+              fontSize: '14px',
+              color: '#222222',
+              background: 'transparent',
+              minWidth: '140px'
+            }}
+          />
+        </div>
 
         <div style={{ width: '1px', height: '40px', background: '#EBEBEB' }}></div>
 
         {/* Check-out */}
-        <input
-          type="date"
-          placeholder="Check-out"
-          value={formData.checkOut}
-          onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
-          style={{
-            border: 'none',
-            outline: 'none',
-            fontSize: '14px',
-            color: '#222222',
-            background: 'transparent',
-            minWidth: '140px'
-          }}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label style={{ fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: '#222222', marginBottom: '4px' }}>
+            Check-out *
+          </label>
+          <input
+            type="date"
+            placeholder="Check-out"
+            value={formData.checkOut}
+            onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
+            style={{
+              border: 'none',
+              outline: 'none',
+              fontSize: '14px',
+              color: '#222222',
+              background: 'transparent',
+              minWidth: '140px'
+            }}
+          />
+        </div>
 
         <div style={{ width: '1px', height: '40px', background: '#EBEBEB' }}></div>
 
         {/* Guests */}
-        <input
-          type="number"
-          placeholder="Guests"
-          min="1"
-          value={formData.guests}
-          onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
-          style={{
-            border: 'none',
-            outline: 'none',
-            fontSize: '14px',
-            color: '#222222',
-            background: 'transparent',
-            width: '80px'
-          }}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label style={{ fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: '#222222', marginBottom: '4px' }}>
+            Guests
+          </label>
+          <input
+            type="number"
+            placeholder="Guests"
+            min="1"
+            value={formData.guests}
+            onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
+            style={{
+              border: 'none',
+              outline: 'none',
+              fontSize: '14px',
+              color: '#222222',
+              background: 'transparent',
+              width: '80px'
+            }}
+          />
+        </div>
 
         <div style={{ width: '1px', height: '40px', background: '#EBEBEB' }}></div>
 
         {/* Rooms */}
-        <input
-          type="number"
-          placeholder="Rooms"
-          min="1"
-          value={formData.rooms}
-          onChange={(e) => setFormData({ ...formData, rooms: e.target.value })}
-          style={{
-            border: 'none',
-            outline: 'none',
-            fontSize: '14px',
-            color: '#222222',
-            background: 'transparent',
-            width: '80px'
-          }}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label style={{ fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: '#222222', marginBottom: '4px' }}>
+            Rooms
+          </label>
+          <input
+            type="number"
+            placeholder="Rooms"
+            min="1"
+            value={formData.rooms}
+            onChange={(e) => setFormData({ ...formData, rooms: e.target.value })}
+            style={{
+              border: 'none',
+              outline: 'none',
+              fontSize: '14px',
+              color: '#222222',
+              background: 'transparent',
+              width: '80px'
+            }}
+          />
+        </div>
 
         <div style={{ width: '1px', height: '40px', background: '#EBEBEB' }}></div>
 
@@ -158,7 +188,8 @@ export const SearchSection = () => {
             fontWeight: '600',
             cursor: 'pointer',
             transition: 'opacity 0.2s ease',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            alignSelf: 'center'
           }}
           onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
           onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}

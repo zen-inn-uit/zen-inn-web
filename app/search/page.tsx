@@ -1,20 +1,56 @@
 'use client';
 
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Navbar from '../../components/ui/navbar';
 import { SearchSection } from '../../components/home/SearchSection';
-import { listings } from '../../data/mock';
-import { Listing } from '../../types/home';
 import { PropertyCard } from '../../components/home/PropertyCard';
 import { ListingPopup } from '../../components/home/ListingPopup';
 import FilterSidebar from '../../components/search/FilterSidebar';
+import { hotelApi, HotelSearchItem } from '../../lib/api/hotel-api';
+import { Listing } from '../../types/home';
 
 export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const [hotels, setHotels] = useState<HotelSearchItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [hoverTimer, setHoverTimer] = useState<NodeJS.Timeout | null>(null);
   const [closeTimer, setCloseTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const handleMouseEnter = (listing: Listing, e: React.MouseEvent) => {
+  useEffect(() => {
+    const fetchHotels = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const city = searchParams.get('location');
+        const checkIn = searchParams.get('checkIn');
+        const checkOut = searchParams.get('checkOut');
+        const adults = searchParams.get('guests');
+        const rooms = searchParams.get('rooms');
+
+        const response = await hotelApi.searchHotels({
+          city: city || undefined,
+          checkIn: checkIn || undefined,
+          checkOut: checkOut || undefined,
+          adults: adults ? parseInt(adults) : undefined,
+          rooms: rooms ? parseInt(rooms) : undefined,
+          sortBy: 'recommended'
+        });
+        setHotels(response.items);
+      } catch (err) {
+        console.error('Failed to fetch hotels:', err);
+        setError('Failed to load hotels. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHotels();
+  }, [searchParams]);
+
+  const handleMouseEnter = (hotel: HotelSearchItem, e: React.MouseEvent) => {
     if (closeTimer) clearTimeout(closeTimer);
     
     const rect = e.currentTarget.getBoundingClientRect();
@@ -30,7 +66,24 @@ export default function SearchPage() {
     if (hoverTimer) clearTimeout(hoverTimer);
     
     const timer = setTimeout(() => {
-      setSelectedListing({ ...listing, position: { x, y } });
+      // Convert HotelSearchItem to Listing type for the popup
+      const listing: Listing = {
+        id: hotel.id,
+        title: hotel.name,
+        slug: hotel.id, // Assuming ID as slug for now, or fetch slug if available
+        location: hotel.city,
+        price: hotel.startingPrice || 0,
+        rating: hotel.rating || 0,
+        reviews: hotel.reviewCount,
+        image: hotel.thumbnailUrl ? [hotel.thumbnailUrl] : [],
+        type: 'Hotel', // Default type
+        beds: 0, // Placeholder
+        baths: 0, // Placeholder
+        sqft: 0, // Placeholder
+        isFavorite: false,
+        position: { x, y }
+      };
+      setSelectedListing(listing);
     }, 1000);
     setHoverTimer(timer);
   };
@@ -55,7 +108,6 @@ export default function SearchPage() {
       minHeight: '100vh',
       padding: '20px'
     }}>
-      {/* Main Container */}
       <div style={{
         maxWidth: '1440px',
         margin: '0 auto',
@@ -65,7 +117,7 @@ export default function SearchPage() {
         overflow: 'hidden'
       }}>
         <Navbar showSearch={false} />
-        <Suspense fallback={<div style={{ padding: '24px 40px' }}>Loading search...</div>}>
+        <Suspense fallback={<div style={{ padding: '24px 40px' }}>Loading search bar...</div>}>
           <SearchSection />
         </Suspense>
         
@@ -79,25 +131,54 @@ export default function SearchPage() {
           <div style={{ flex: 1 }}>
             <div style={{ marginBottom: '24px' }}>
               <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#222222', margin: 0 }}>
-                {listings.length} stays found
+                {loading ? 'Searching...' : `${hotels.length} stays found`}
               </h1>
             </div>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-              gap: '24px'
-            }}>
-              {listings.map((listing) => (
-                <PropertyCard
-                  key={listing.id}
-                  listing={listing}
-                  onMouseEnter={(e) => handleMouseEnter(listing, e)}
-                  onMouseLeave={handleMouseLeave}
-                  onClick={() => window.location.href = `/hotels/${listing.slug}`}
-                />
-              ))}
-            </div>
+            {loading ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} style={{ height: '350px', background: '#f0f0f0', borderRadius: '16px', animation: 'pulse 1.5s infinite' }}></div>
+                ))}
+              </div>
+            ) : error ? (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#FF385C' }}>{error}</div>
+            ) : hotels.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '600' }}>No results found</h2>
+                <p style={{ color: '#717171', marginTop: '8px' }}>Try adjusting your search filters.</p>
+              </div>
+            ) : (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                gap: '24px'
+              }}>
+                {hotels.map((hotel) => (
+                  <PropertyCard
+                    key={hotel.id}
+                    listing={{
+                      id: hotel.id,
+                      title: hotel.name,
+                      slug: hotel.id,
+                      location: hotel.city,
+                      price: hotel.startingPrice || 0,
+                      rating: hotel.rating || 0,
+                      reviews: hotel.reviewCount,
+                      image: hotel.thumbnailUrl ? [hotel.thumbnailUrl] : [],
+                      type: 'Hotel',
+                      beds: 0,
+                      baths: 0,
+                      sqft: 0,
+                      isFavorite: false
+                    }}
+                    onMouseEnter={(e) => handleMouseEnter(hotel, e)}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={() => window.location.href = `/hotels/${hotel.id}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -112,6 +193,11 @@ export default function SearchPage() {
       )}
 
       <style jsx>{`
+        @keyframes pulse {
+          0% { opacity: 1; }
+          50% { opacity: 0.5; }
+          100% { opacity: 1; }
+        }
         @keyframes popupFadeIn {
           from {
             opacity: 0;
@@ -126,3 +212,4 @@ export default function SearchPage() {
     </div>
   );
 }
+
