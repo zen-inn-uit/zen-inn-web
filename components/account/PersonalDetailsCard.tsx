@@ -64,68 +64,57 @@ export default function PersonalDetailsCard({ user }: PersonalDetailsCardProps) 
     ];
 
     return (
-        <div
-            className="rounded-[28px] border backdrop-blur-sm shadow-md p-6 md:p-8"
-            style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.28)',
-                borderColor: 'rgba(255, 255, 255, 0.35)',
-            }}
-        >
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-display)', color: '#3d2f26' }}>
-                    Personal details
-                </h1>
-                <p className="text-gray-700" style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-h5)' }}>
-                    Your account information from our server.
-                </p>
+        <div className="rounded-2xl bg-white shadow-lg overflow-hidden animate-scale-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#6B5B3D] to-[#8B7355] p-6 text-white">
+                <h1 className="text-2xl font-bold mb-2">Personal Details</h1>
+                <p className="text-white/90 text-sm">Your account information from our server</p>
             </div>
 
-            <div className="space-y-0">
-                {fields.map((field, index) => (
-                    <div
-                        key={field.key}
-                        className={`py-5 ${index !== fields.length - 1 ? "border-b border-gray-300/25" : ""}`}
-                    >
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                            {/* Label column */}
-                            <div className="md:col-span-3">
-                                <span className="text-sm font-normal text-gray-600" style={{ fontFamily: 'var(--font-body)' }}>
-                                    {field.label}
-                                </span>
-                            </div>
-
-                            {/* Value column */}
-                            <div className="md:col-span-9 flex gap-2 items-center">
-                                <span className="font-medium text-gray-900" style={{ fontFamily: 'var(--font-body)' }}>
-                                    {field.value}
-                                </span>
-                                {field.verified !== undefined && (
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                                        field.verified
-                                            ? "bg-green-100/90 text-green-800 border border-green-300/60"
-                                            : "bg-yellow-100/90 text-yellow-800 border border-yellow-300/60"
-                                    }`}>
-                                        {field.verified ? "Verified" : "Not verified"}
-                                    </span>
-                                )}
-                                {field.badge && (
-                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100/90 text-blue-800 border border-blue-300/60">
-                                        {field.value}
-                                    </span>
-                                )}
-                                {field.statusBadge && (
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                                        user.status === 'ACTIVE'
-                                            ? "bg-green-100/90 text-green-800 border border-green-300/60"
-                                            : "bg-red-100/90 text-red-800 border border-red-300/60"
-                                    }`}>
-                                        {field.value}
-                                    </span>
+            {/* Content */}
+            <div className="p-6">
+                <div className="space-y-1 stagger-fade-in">
+                    {fields.map((field, index) => (
+                        <div 
+                            key={field.key}
+                            className="p-4 rounded-xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-200 group"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4 flex-1">
+                                    <div className="flex-1">
+                                        <p className="font-medium text-gray-900">{field.label}</p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <p className="text-sm text-gray-500">{field.value}</p>
+                                            {field.verified !== undefined && (
+                                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                                    field.verified
+                                                        ? "bg-green-100 text-green-800"
+                                                        : "bg-yellow-100 text-yellow-800"
+                                                }`}>
+                                                    {field.verified ? "Verified" : "Not verified"}
+                                                </span>
+                                            )}
+                                            {field.statusBadge && (
+                                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                                    user.status === 'ACTIVE'
+                                                        ? "bg-green-100 text-green-800"
+                                                        : "bg-red-100 text-red-800"
+                                                }`}>
+                                                    {field.value}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                                {field.key === 'email' && (
+                                    <button className="px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:border-[#6B5B3D] hover:text-[#6B5B3D] transition-all text-sm">
+                                        Edit
+                                    </button>
                                 )}
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
     );
