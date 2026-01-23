@@ -1,15 +1,50 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { listings } from '../../data/mock';
 import { Listing } from '../../types/home';
 import { PropertyCard } from './PropertyCard';
 import { ListingPopup } from './ListingPopup';
+import { hotelApi, HotelSearchItem } from '@/lib/api/hotel-api';
 
 export const ListingGrid = () => {
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
   const closeTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Fetch featured hotels on mount
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        setLoading(true);
+        const hotels = await hotelApi.getFeaturedHotels(10);
+        
+        // Transform HotelSearchItem to Listing format
+        const transformedListings: Listing[] = hotels.map((hotel: HotelSearchItem) => ({
+          id: hotel.id,
+          slug: hotel.id, // Using ID as slug for now
+          image: hotel.thumbnailUrl ? [hotel.thumbnailUrl] : ['/auth-bg.png'],
+          title: hotel.name,
+          location: `${hotel.city}`,
+          price: hotel.startingPrice || 0,
+          rating: hotel.rating || 0,
+          reviews: hotel.reviewCount,
+          description: hotel.address,
+          guests: hotel.maxGuests || undefined,
+          bedrooms: hotel.bedroomCount || undefined,
+        }));
+
+        setListings(transformedListings);
+      } catch (error) {
+        console.error('Failed to fetch featured hotels:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHotels();
+  }, []);
 
   // Block scrolling when popup is active
   useEffect(() => {
@@ -64,13 +99,31 @@ export const ListingGrid = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center' }}>
+        <div style={{ display: 'inline-block', width: '40px', height: '40px', border: '3px solid #f3f3f3', borderTop: '3px solid #6B5B3D', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <p style={{ marginTop: '16px', color: '#717171' }}>Đang tải khách sạn...</p>
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: '40px' }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '24px'
-      }}>
+      <div 
+        className="stagger-fade-in"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '24px'
+        }}
+      >
         {listings.map((listing) => (
           <PropertyCard
             key={listing.id}

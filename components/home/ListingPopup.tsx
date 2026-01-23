@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { Listing } from '../../types/home';
+import { formatCurrency } from '@/lib/utils/currency';
 
 interface ListingPopupProps {
   listing: Listing;
@@ -22,7 +23,8 @@ export const ListingPopup = ({ listing, onClose, onMouseEnter, onMouseLeave }: L
         left: `${listing.position?.x || 0}px`,
         top: `${listing.position?.y || 0}px`,
         width: '400px',
-        background: 'white',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
         borderRadius: '12px',
         boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
         zIndex: 1000,
@@ -32,7 +34,7 @@ export const ListingPopup = ({ listing, onClose, onMouseEnter, onMouseLeave }: L
       }}
     >
       <img
-        src={listing.image}
+        src={listing.image[0] || '/placeholder-hotel.jpg'}
         alt={listing.title}
         style={{
           width: '100%',
@@ -82,9 +84,9 @@ export const ListingPopup = ({ listing, onClose, onMouseEnter, onMouseLeave }: L
           borderTop: '1px solid #f0f0f0',
           borderBottom: '1px solid #f0f0f0'
         }}>
-          <span><strong>{listing.guests}</strong> guests</span>
-          <span><strong>{listing.bedrooms}</strong> bedrooms</span>
-          <span><strong>{listing.price}</strong>/night</span>
+          <span><strong>{listing.guests || 0}</strong> guests</span>
+          <span><strong>{listing.bedrooms || 0}</strong> bedrooms</span>
+          <span><strong>{formatCurrency(listing.price)}</strong>/night</span>
         </div>
 
         <p style={{

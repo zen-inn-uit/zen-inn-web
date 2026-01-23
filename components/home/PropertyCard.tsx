@@ -3,6 +3,7 @@
 import React from 'react';
 import { Heart, Star } from 'lucide-react';
 import { Listing } from '../../types/home';
+import { formatCurrency } from '@/lib/utils/currency';
 
 interface PropertyCardProps {
   listing: Listing;
@@ -14,14 +15,15 @@ interface PropertyCardProps {
 export const PropertyCard = ({ listing, onMouseEnter, onMouseLeave, onClick }: PropertyCardProps) => {
   return (
     <div 
-      style={{ cursor: 'pointer', position: 'relative' }}
+      className="card-hover transition-smooth"
+      style={{ cursor: 'pointer', position: 'relative', background: 'transparent' }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={onClick}
     >
-      <div style={{ position: 'relative', aspectRatio: '1/1', marginBottom: '12px' }}>
+      <div className="image-hover-zoom" style={{ position: 'relative', aspectRatio: '1/1', marginBottom: '12px', borderRadius: '12px', overflow: 'hidden' }}>
         <img 
-          src={listing.image} 
+          src={listing.image[0] || '/placeholder-hotel.jpg'} 
           alt={listing.title}
           style={{ 
             width: '100%', 
@@ -30,21 +32,41 @@ export const PropertyCard = ({ listing, onMouseEnter, onMouseLeave, onClick }: P
             objectFit: 'cover' 
           }}
         />
-        <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
+        <div 
+          className="transition-smooth"
+          style={{ 
+            position: 'absolute', 
+            top: '12px', 
+            right: '12px',
+            cursor: 'pointer',
+            transition: 'transform 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.stopPropagation();
+            e.currentTarget.style.transform = 'scale(1.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.stopPropagation();
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        >
           <Heart size={24} color="white" fill="rgba(0,0,0,0.3)" />
         </div>
         {listing.badge && (
-          <div style={{
-            position: 'absolute',
-            top: '12px',
-            left: '12px',
-            background: 'white',
-            padding: '4px 8px',
-            borderRadius: '4px',
-            fontSize: '12px',
-            fontWeight: '600',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-          }}>
+          <div 
+            className="animate-fade-in-down"
+            style={{
+              position: 'absolute',
+              top: '12px',
+              left: '12px',
+              background: 'white',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              fontSize: '12px',
+              fontWeight: '600',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
             {listing.badge}
           </div>
         )}
@@ -60,7 +82,7 @@ export const PropertyCard = ({ listing, onMouseEnter, onMouseLeave, onClick }: P
       <p style={{ fontSize: '14px', color: '#717171', margin: '2px 0' }}>{listing.distance}</p>
       <p style={{ fontSize: '14px', color: '#717171', margin: '2px 0' }}>{listing.date}</p>
       <p style={{ fontSize: '15px', color: '#222222', margin: '6px 0 0 0', fontWeight: '600' }}>
-        {listing.price} <span style={{ fontWeight: '400' }}>night</span>
+        {formatCurrency(listing.price)} <span style={{ fontWeight: '400' }}>night</span>
       </p>
     </div>
   );
