@@ -3,9 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import { Globe, Menu, User } from 'lucide-react';
+import { Globe, Menu, User, Sparkles } from 'lucide-react';
 import AirbnbSearch from "./airbnb-search";
 import { useAuth } from "@/contexts/auth-context";
+import { PartnerRegistrationForm } from "./partner-registration-form";
+import { useRouter } from "next/navigation";
 
 interface NavbarProps {
   showSearch?: boolean;
@@ -13,14 +15,20 @@ interface NavbarProps {
 
 export default function Navbar({ showSearch = true }: NavbarProps) {
   const { user, logout } = useAuth();
+  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [partnerFormOpen, setPartnerFormOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const partnerRef = useRef<HTMLDivElement>(null);
 
   // close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
+      }
+      if (partnerRef.current && !partnerRef.current.contains(e.target as Node)) {
+        setPartnerFormOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -30,6 +38,26 @@ export default function Navbar({ showSearch = true }: NavbarProps) {
   const getInitial = () => {
     if (!user?.email) return null;
     return user.email.charAt(0).toUpperCase();
+  };
+
+  const handlePartnerSuccess = () => {
+    setPartnerFormOpen(false);
+    alert('Đăng ký đối tác thành công! Vui lòng chờ quản trị viên duyệt hồ sơ.');
+    router.push('/partner');
+  };
+
+  const handlePartnerClick = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    
+    if (user.role === 'PARTNER') {
+      router.push('/partner');
+      return;
+    }
+    
+    setPartnerFormOpen(!partnerFormOpen);
   };
 
   return (
@@ -61,8 +89,59 @@ export default function Navbar({ showSearch = true }: NavbarProps) {
 
         {/* right menu */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <Link href="/partner" style={{ fontSize: '14px', fontWeight: '600', cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}>
-            Zen Inn your home
+          <div style={{ position: 'relative' }} ref={partnerRef}>
+            <button 
+              onClick={handlePartnerClick}
+              style={{ 
+                fontSize: '14px', 
+                fontWeight: '600', 
+                cursor: 'pointer', 
+                border: 'none',
+                background: 'transparent',
+                color: '#222222',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                transition: 'background 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#f7f7f7'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+            >
+              Zen Inn your home
+            </button>
+            
+            {partnerFormOpen && (
+              <PartnerRegistrationForm 
+                onSuccess={handlePartnerSuccess}
+                onCancel={() => setPartnerFormOpen(false)}
+              />
+            )}
+          </div>
+
+          <Link
+            href="/ai-planner"
+            style={{ 
+              fontSize: '14px', 
+              fontWeight: '600', 
+              cursor: 'pointer', 
+              border: 'none',
+              background: 'transparent',
+              color: '#6B5B3D',
+              padding: '8px 12px',
+              borderRadius: '8px',
+              transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#F9F7F4';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}
+          >
+            <Sparkles size={16} />
+            AI Planner
           </Link>
           <Globe size={18} style={{ cursor: 'pointer' }} />
 
@@ -130,6 +209,16 @@ export default function Navbar({ showSearch = true }: NavbarProps) {
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
                       My Bookings
+                    </Link>
+                    <Link
+                      href="/ai-planner"
+                      onClick={() => setDropdownOpen(false)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', fontSize: '14px', color: '#6B5B3D', textDecoration: 'none', fontWeight: '600' }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#F9F7F4'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <Sparkles size={14} />
+                      AI Trip Planner
                     </Link>
                     <Link
                       href="/wishlist"
