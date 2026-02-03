@@ -7,6 +7,7 @@ import Link from 'next/link';
 
 interface PropertyCardProps {
     id: string;
+    slug?: string;
     imageUrl: string;
     location: string;
     distance?: string;
@@ -18,6 +19,7 @@ interface PropertyCardProps {
 
 export default function PropertyCard({
     id,
+    slug,
     imageUrl,
     location,
     distance,
@@ -27,9 +29,10 @@ export default function PropertyCard({
     isGuestFavourite = false,
 }: PropertyCardProps) {
     const [isWishlisted, setIsWishlisted] = useState(false);
+    const hotelUrl = `/hotels/${slug || id}`;
 
     return (
-        <Link href={`/hotels/${id}`} className="group cursor-pointer">
+        <Link href={hotelUrl} className="group cursor-pointer">
             <div className="relative">
                 {/* Image */}
                 <div className="relative aspect-square rounded-xl overflow-hidden mb-3">

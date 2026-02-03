@@ -4,20 +4,61 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import Navbar from "@/components/ui/navbar";
 import ChatButton from "@/components/ui/chat-button";
+import { useBooking } from "@/contexts/booking-context";
+import { customerAPI } from "@/lib/api/customer-api";
 
 type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "EXPIRED";
 
 export default function CheckoutPaymentPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const pid = searchParams.get("pid");
-    const simulate = searchParams.get("simulate"); // For demo: ?simulate=fail
+    const { bookingDetails, clearBooking } = useBooking();
     
     const [status, setStatus] = useState<PaymentStatus>("PENDING");
     const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes in seconds
+    const [booking, setBooking] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
     const hasProcessedPaid = useRef(false);
+    const pollingInterval = useRef<NodeJS.Timeout | null>(null);
+
+    // Get booking ID from URL or context
+    const bookingId = searchParams.get("bookingId") || bookingDetails?.bookingId;
+
+    // Redirect if no booking ID
+    useEffect(() => {
+        if (!bookingId) {
+            router.replace('/');
+        }
+    }, [bookingId, router]);
+
+    // Fetch booking details
+    useEffect(() => {
+        if (!bookingId) return;
+
+        const fetchBooking = async () => {
+            try {
+                const response = await customerAPI.getBookingById(bookingId);
+                setBooking(response.booking);
+                
+                // Check initial payment status
+                if (response.booking.paymentStatus === 'COMPLETED') {
+                    setStatus('PAID');
+                } else if (response.booking.paymentStatus === 'FAILED') {
+                    setStatus('FAILED');
+                }
+                
+                setLoading(false);
+            } catch (error) {
+                console.error('Failed to fetch booking:', error);
+                setLoading(false);
+                alert('Failed to load booking details');
+                router.replace('/');
+            }
+        };
+
+        fetchBooking();
+    }, [bookingId, router]);
 
     // Countdown timer
     useEffect(() => {
@@ -39,49 +80,60 @@ export default function CheckoutPaymentPage() {
         return () => clearInterval(timer);
     }, [timeRemaining]);
 
-    // Handle simulate=fail query param
+    // Poll payment status
     useEffect(() => {
-        if (simulate === "fail" && status === "PENDING") {
-            const timer = setTimeout(() => {
-                setStatus("FAILED");
-            }, 2000);
-            return () => clearTimeout(timer);
-        }
-    }, [simulate, status]);
+        if (status !== "PENDING" || !bookingId) return;
 
-    // Mock payment status polling
-    useEffect(() => {
-        if (status !== "PENDING") return;
+        pollingInterval.current = setInterval(async () => {
+            try {
+                const response = await customerAPI.getBookingById(bookingId);
+                
+                if (response.booking.paymentStatus === 'COMPLETED') {
+                    setStatus('PAID');
+                    if (pollingInterval.current) {
+                        clearInterval(pollingInterval.current);
+                    }
+                } else if (response.booking.paymentStatus === 'FAILED') {
+                    setStatus('FAILED');
+                    if (pollingInterval.current) {
+                        clearInterval(pollingInterval.current);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to poll payment status:', error);
+            }
+        }, 3000); // Poll every 3 seconds
 
-        const pollInterval = setInterval(() => {
-            // In a real app, this would check the payment status from the server
-            // For now, we just keep polling (status stays PENDING unless expired or simulate=fail)
-        }, 2500);
-
-        return () => clearInterval(pollInterval);
-    }, [status]);
+        return () => {
+            if (pollingInterval.current) {
+                clearInterval(pollingInterval.current);
+            }
+        };
+    }, [status, bookingId]);
 
     // Handle redirects based on status
     useEffect(() => {
         if (status === "PAID") {
-            router.replace("/checkout/success");
+            router.replace(`/checkout/success?bookingId=${bookingId}`);
         } else if (status === "FAILED") {
-            // Extract reason from simulate query param if present
-            const reason = searchParams.get("reason") || "declined";
-            router.replace(`/checkout/failure?pid=${pid}&reason=${reason}`);
+            router.replace(`/checkout/failure?bookingId=${bookingId}&reason=payment_failed`);
         } else if (status === "EXPIRED") {
-            router.replace(`/checkout/expired?pid=${pid}`);
+            router.replace(`/checkout/expired?bookingId=${bookingId}`);
         }
-    }, [status, router, pid, searchParams]);
+    }, [status, router, bookingId]);
 
-    // Handle "I've paid" button click - simulate payment success
+    // Handle "I've paid" button click
     const handlePaidClick = () => {
         if (!hasProcessedPaid.current && status === "PENDING") {
             hasProcessedPaid.current = true;
-            // Simulate payment success after a short delay (1-2 polls)
-            setTimeout(() => {
-                setStatus("PAID");
-            }, 2000);
+            // Force a status check
+            if (bookingId) {
+                customerAPI.getBookingById(bookingId).then(response => {
+                    if (response.booking.paymentStatus === 'COMPLETED') {
+                        setStatus('PAID');
+                    }
+                });
+            }
         }
     };
 
@@ -91,30 +143,14 @@ export default function CheckoutPaymentPage() {
         return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     };
 
-    // Mock payment data
-    const amount = 420.00;
-
-    if (!pid) {
+    if (loading || !booking) {
         return (
             <div className="min-h-screen" style={{ backgroundColor: '#f5f5f0' }}>
-                <header>
-                    <Navbar />
-                </header>
                 <main className="max-w-4xl mx-auto px-4 md:px-6 py-16">
                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center">
-                        <h1 className="text-2xl font-bold mb-4" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
-                            Payment ID missing
-                        </h1>
-                        <p className="text-gray-600 mb-6" style={{ fontFamily: 'var(--font-body)' }}>
-                            Please go back and try again.
+                        <p className="text-gray-600" style={{ fontFamily: 'var(--font-body)' }}>
+                            Loading payment details...
                         </p>
-                        <Link
-                            href="/checkout/review"
-                            className="inline-block px-6 py-3 rounded-lg text-white font-bold hover:opacity-90 transition-all"
-                            style={{ fontFamily: 'var(--font-display)', backgroundColor: 'var(--color-form)', fontSize: 'var(--fs-h5)' }}
-                        >
-                            Back to review
-                        </Link>
                     </div>
                 </main>
                 <ChatButton />
@@ -124,9 +160,6 @@ export default function CheckoutPaymentPage() {
 
     return (
         <div className="min-h-screen" style={{ backgroundColor: '#f5f5f0' }}>
-            <header>
-                <Navbar />
-            </header>
 
             <main className="max-w-6xl mx-auto px-4 md:px-6 py-8">
                 {/* Status pill */}
@@ -143,21 +176,51 @@ export default function CheckoutPaymentPage() {
 
                 {/* Main content - 2 column layout */}
                 <div className="flex flex-col md:flex-row gap-8">
-                    {/* Left column - QR Code */}
+                    {/* Left column - QR Code or Redirect */}
                     <div className="flex-1 flex flex-col items-center md:items-start">
                         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 w-full max-w-md">
-                            <div className="relative w-full aspect-square mb-4 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                                <Image
-                                    src="/qr-placeholder.svg"
-                                    alt="QR Code"
-                                    fill
-                                    className="object-contain p-4"
-                                    sizes="400px"
-                                />
-                            </div>
-                            <p className="text-sm text-center text-gray-600" style={{ fontFamily: 'var(--font-body)' }}>
-                                Scan QR to pay
-                            </p>
+                            {booking.paymentUrl ? (
+                                <div className="space-y-6 flex flex-col items-center text-center">
+                                    <div className="p-4 bg-blue-50 rounded-full mb-2">
+                                        <svg className="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)' }}>Thanh toán qua VNPay</h3>
+                                    <p className="text-gray-600 mb-6" style={{ fontFamily: 'var(--font-body)' }}>
+                                        Vui lòng nhấn vào nút bên dưới để chuyển tiếp sang cổng thanh toán của VNPay. Hệ thống hỗ trợ Thẻ ATM, QRCode và Thẻ Quốc tế.
+                                    </p>
+                                    
+                                    <a 
+                                        href={booking.paymentUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full py-4 text-white rounded-xl font-bold text-lg shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 group"
+                                        style={{ fontFamily: 'var(--font-body)', backgroundColor: 'var(--color-primary)' }}
+                                    >
+                                        Thanh toán với VNPay
+                                        <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                        </svg>
+                                    </a>
+                                    
+                                    <p className="text-xs text-gray-400 mt-4 leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
+                                        Bạn sẽ được chuyển hướng an toàn. Đừng đóng trình duyệt này cho đến khi nhận được thông báo thành công.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="relative w-full aspect-square mb-4 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center border-2 border-dashed border-gray-200">
+                                    <div className="text-center p-6">
+                                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-accent mx-auto mb-4"></div>
+                                        <p className="text-sm font-medium text-gray-700 mb-1" style={{ fontFamily: 'var(--font-body)' }}>
+                                            Đang khởi tạo thanh toán...
+                                        </p>
+                                        <p className="text-xs text-gray-400" style={{ fontFamily: 'var(--font-body)' }}>
+                                            Vui lòng đợi trong giây lát
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -170,17 +233,17 @@ export default function CheckoutPaymentPage() {
                                     Amount to pay
                                 </div>
                                 <div className="text-3xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
-                                    ${amount.toFixed(2)}
+                                    {booking.totalPrice.toLocaleString('vi-VN')} VNĐ
                                 </div>
                             </div>
 
                             {/* Order code / Reference */}
                             <div className="mb-6">
                                 <div className="text-sm text-gray-600 mb-2" style={{ fontFamily: 'var(--font-body)' }}>
-                                    Order code
+                                    Booking ID
                                 </div>
                                 <div className="text-base font-mono font-medium" style={{ fontFamily: 'var(--font-body)', color: '#60463d' }}>
-                                    {pid}
+                                    {booking.id}
                                 </div>
                             </div>
 
@@ -201,18 +264,11 @@ export default function CheckoutPaymentPage() {
                                 <button
                                     type="button"
                                     onClick={handlePaidClick}
-                                    className="w-full py-3 rounded-lg border-2 border-accent bg-accent/10 text-accent font-bold hover:bg-accent/20 transition-colors"
-                                    style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-h5)' }}
+                                    className="w-full py-3 rounded-lg font-bold hover:opacity-90 transition-colors"
+                                    style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-h5)', backgroundColor: 'var(--color-primary)', color: '#ffffff' }}
                                 >
                                     I've paid
                                 </button>
-                                <Link
-                                    href="/checkout/review"
-                                    className="block w-full py-3 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors text-center"
-                                    style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--fs-h5)' }}
-                                >
-                                    Change payment method
-                                </Link>
                                 <Link
                                     href="/checkout/review"
                                     className="block w-full py-3 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors text-center"

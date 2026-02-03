@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useBooking } from "@/contexts/booking-context";
 
 interface Room {
+    id: string;
     name: string;
     bedInfo: string;
     capacity: string;
@@ -14,6 +17,11 @@ interface Room {
 }
 
 interface BookingSummaryCardProps {
+    hotelId: string;
+    hotelName: string;
+    hotelImage: string;
+    hotelCity: string;
+    hotelAddress: string;
     rooms: Room[];
     checkIn?: string;
     checkOut?: string;
@@ -135,6 +143,11 @@ function GuestSelector() {
 }
 
 export default function BookingSummaryCard({
+    hotelId,
+    hotelName,
+    hotelImage,
+    hotelCity,
+    hotelAddress,
     rooms,
     checkIn: initialCheckIn,
     checkOut: initialCheckOut,
@@ -143,6 +156,8 @@ export default function BookingSummaryCard({
     selectedRoomIndex: externalSelectedRoomIndex = 0,
     onRoomChange
 }: BookingSummaryCardProps) {
+    const router = useRouter();
+    const { setBookingDetails } = useBooking();
     const [internalSelectedRoomIndex, setInternalSelectedRoomIndex] = useState(externalSelectedRoomIndex);
     const [checkIn, setCheckIn] = useState(initialCheckIn || "");
     const [checkOut, setCheckOut] = useState(initialCheckOut || "");
@@ -190,6 +205,42 @@ export default function BookingSummaryCard({
         }
     };
 
+    const handleReserveNow = () => {
+        // Validate dates
+        if (!checkIn || !checkOut) {
+            alert('Please select check-in and check-out dates');
+            return;
+        }
+
+        const selectedRoom = rooms[internalSelectedRoomIndex];
+        const nights = calculateNights(checkIn, checkOut);
+        const subtotal = selectedRoom.pricePerNight * nights;
+        const taxes = subtotal * 0.1; // 10% tax
+        const total = subtotal + taxes;
+
+        // Save booking details to context
+        setBookingDetails({
+            hotelId,
+            hotelName,
+            hotelImage,
+            hotelCity,
+            hotelAddress,
+            roomId: selectedRoom.id,
+            roomName: selectedRoom.name,
+            checkIn,
+            checkOut,
+            guestCount: 2, // TODO: Get from GuestSelector
+            nights,
+            pricePerNight: selectedRoom.pricePerNight,
+            subtotal,
+            taxes,
+            total,
+        });
+
+        // Navigate to checkout
+        router.push('/checkout/details');
+    };
+
     return (
         <div className="bg-white rounded-xl border border-gray-300 shadow-lg p-4 max-h-[calc(100vh-8rem)] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#CBD5E0 #F7FAFC' }}>
             {/* Custom scrollbar styles */}
@@ -214,14 +265,14 @@ export default function BookingSummaryCard({
             <div className="mb-4 pb-4 border-b border-gray-200">
                 <div className="flex items-baseline gap-2 mb-1">
                     <span className="text-2xl font-bold" style={{ fontFamily: 'var(--font-display)', color: '#262626' }}>
-                        ${selectedRoom.pricePerNight}
+                        {selectedRoom.pricePerNight.toLocaleString('vi-VN')} VNĐ
                     </span>
                     <span className="text-xs text-gray-600" style={{ fontFamily: 'var(--font-body)' }}>
                         / night
                     </span>
                 </div>
                 <div className="text-xs text-gray-600" style={{ fontFamily: 'var(--font-body)' }}>
-                    ${totalPrice} total for {nights} {nights > 1 ? 'nights' : 'night'}
+                    {totalPrice.toLocaleString('vi-VN')} VNĐ total for {nights} {nights > 1 ? 'nights' : 'night'}
                 </div>
             </div>
 
@@ -238,7 +289,7 @@ export default function BookingSummaryCard({
                 >
                     {rooms.map((room, index) => (
                         <option key={index} value={index}>
-                            {room.name} - ${room.pricePerNight}/night
+                            {room.name} - {room.pricePerNight.toLocaleString('vi-VN')} VNĐ/night
                         </option>
                     ))}
                 </select>
@@ -301,8 +352,9 @@ export default function BookingSummaryCard({
             </div>
 
             {/* Reserve button */}
-            <Link
-                href="/checkout/details"
+            <button
+                type="button"
+                onClick={handleReserveNow}
                 className="block w-full py-2.5 rounded-lg text-white font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-center shadow-md hover:shadow-lg text-sm"
                 style={{ 
                     fontFamily: 'var(--font-display)', 
@@ -311,7 +363,7 @@ export default function BookingSummaryCard({
                 }}
             >
                 Reserve Now
-            </Link>
+            </button>
 
             <p className="text-xs text-center text-gray-500 mt-2" style={{ fontFamily: 'var(--font-body)' }}>
                 You won't be charged yet
@@ -324,12 +376,12 @@ export default function BookingSummaryCard({
                 </h4>
                 <div className="space-y-1.5 text-xs" style={{ fontFamily: 'var(--font-body)' }}>
                     <div className="flex justify-between text-gray-600">
-                        <span>${selectedRoom.pricePerNight} × {nights} {nights > 1 ? 'nights' : 'night'}</span>
-                        <span>${totalPrice}</span>
+                        <span>{selectedRoom.pricePerNight.toLocaleString('vi-VN')} VNĐ × {nights} {nights > 1 ? 'nights' : 'night'}</span>
+                        <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span>
                     </div>
                     <div className="flex justify-between font-semibold pt-1.5 border-t border-gray-200" style={{ color: '#262626' }}>
                         <span>Total</span>
-                        <span>${totalPrice}</span>
+                        <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span>
                     </div>
                 </div>
             </div>

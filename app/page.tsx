@@ -9,6 +9,7 @@ import { TrendingDestinations } from '../components/home/TrendingDestinations';
 import { PropertyTypes } from '../components/home/PropertyTypes';
 import { ExploreVietnam } from '../components/home/ExploreVietnam';
 import { ShowMore } from '../components/home/ShowMore';
+import { AIPlannerPromo } from '../components/home/AIPlannerPromo';
 import { Suspense } from 'react';
 
 export default function Home() {
@@ -34,6 +35,7 @@ export default function Home() {
         </Suspense>
         <QuickPlanning />
         <ListingGrid />
+        <AIPlannerPromo />
         <TrendingDestinations />
         <PropertyTypes />
         <ExploreVietnam />
