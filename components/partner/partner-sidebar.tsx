@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/theme-context';
+import { useAuth } from '@/contexts/auth-context';
+import { chatApi } from '@/lib/chat.api';
 
 const menuItems = [
   { 
@@ -77,7 +79,7 @@ const menuItems = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
     ),
-    badge: 3
+    hasDynamicBadge: true
   },
   { 
     href: '/partner/reviews', 
@@ -103,6 +105,31 @@ export default function PartnerSidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { toggleMode, mode } = useTheme();
+  const { user } = useAuth();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Fetch unread count for partner messages
+  useEffect(() => {
+    if (!user) {
+      setUnreadCount(0);
+      return;
+    }
+
+    const loadUnreadCount = async () => {
+      try {
+        const res = await chatApi.getUnreadCount();
+        const count = res.unreadCount ?? (res as any).data?.unreadCount ?? 0;
+        setUnreadCount(count);
+      } catch (err) {
+        console.error('Failed to load partner unread count:', err);
+        setUnreadCount(0);
+      }
+    };
+
+    loadUnreadCount();
+    const interval = setInterval(loadUnreadCount, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, [user]);
 
   const sidebarBg = mode === 'light' ? 'bg-white' : 'bg-[#FDFBF7]';
   const sidebarBorder = mode === 'light' ? 'border-slate-200' : 'border-[#E5D5C3]';
@@ -180,7 +207,12 @@ export default function PartnerSidebar() {
                         <span className={`font-semibold text-sm flex-1 ${isActive ? 'text-[#6B5B3D]' : ''}`}>
                           {item.label}
                         </span>
-                        {item.badge && (
+                        {(item as any).hasDynamicBadge && unreadCount > 0 && (
+                          <span className="px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-semibold">
+                            {unreadCount > 99 ? '99+' : unreadCount}
+                          </span>
+                        )}
+                        {item.badge && !(item as any).hasDynamicBadge && (
                           <span className="px-2 py-0.5 bg-[#8B6F47] text-white text-xs rounded-full font-semibold">
                             {item.badge}
                           </span>
@@ -193,7 +225,12 @@ export default function PartnerSidebar() {
                     {isCollapsed && (
                       <div className="absolute left-full ml-2 px-2 py-1 bg-[#3d2e1f] text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 flex items-center gap-2">
                         {item.label}
-                        {item.badge && (
+                        {(item as any).hasDynamicBadge && unreadCount > 0 && (
+                          <span className="px-1.5 py-0.5 bg-red-500 text-white text-xs rounded-full">
+                            {unreadCount > 99 ? '99+' : unreadCount}
+                          </span>
+                        )}
+                        {item.badge && !(item as any).hasDynamicBadge && (
                           <span className="px-1.5 py-0.5 bg-[#8B6F47] text-white text-xs rounded-full">
                             {item.badge}
                           </span>

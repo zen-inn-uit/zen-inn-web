@@ -17,6 +17,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  
+  // Suppress Node.js deprecation warnings from dependencies
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.infrastructureLogging = {
+        level: 'error',
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

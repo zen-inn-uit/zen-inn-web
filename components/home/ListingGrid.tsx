@@ -23,7 +23,7 @@ export const ListingGrid = () => {
         // Transform HotelSearchItem to Listing format
         const transformedListings: Listing[] = hotels.map((hotel: HotelSearchItem) => ({
           id: hotel.id,
-          slug: hotel.id, // Using ID as slug for now
+          slug: hotel.slug || hotel.id, // Use slug from API, fallback to ID
           image: hotel.thumbnailUrl ? [hotel.thumbnailUrl] : ['/auth-bg.png'],
           title: hotel.name,
           location: `${hotel.city}`,
