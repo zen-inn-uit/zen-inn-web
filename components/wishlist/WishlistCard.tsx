@@ -39,7 +39,7 @@ export default function WishlistCard({
         )}
       </button>
 
-      <Link href={`/hotels/${item.hotelId}`} className="block">
+      <Link href={`/hotels/${item.hotelSlug || item.hotelId}`} className="block">
         {/* Hotel Image */}
         <div className="relative w-full h-64 overflow-hidden">
           <Image

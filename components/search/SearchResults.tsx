@@ -6,6 +6,7 @@ import HotelCard from "./HotelCard";
 
 interface Hotel {
     id: string;
+    slug?: string;
     name: string;
     location: string;
     image: string;
@@ -54,6 +55,7 @@ export default function SearchResults({ hotels }: { hotels: Hotel[] }) {
                             <HotelCard
                                 key={hotel.id}
                                 id={hotel.id}
+                                slug={hotel.slug}
                                 name={hotel.name}
                                 location={hotel.location}
                                 image={hotel.image}

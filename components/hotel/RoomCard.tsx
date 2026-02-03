@@ -55,10 +55,10 @@ export default function RoomCard({
                 <div className="flex flex-col items-end gap-4">
                     <div className="text-right">
                         <div className="text-sm text-gray-500 mb-1" style={{ fontFamily: 'var(--font-body)' }}>
-                            ${pricePerNight.toFixed(0)} <span className="text-xs">per night</span>
+                            {pricePerNight.toLocaleString('vi-VN')} VNĐ <span className="text-xs">per night</span>
                         </div>
                         <div className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
-                            ${totalPrice.toFixed(0)}
+                            {totalPrice.toLocaleString('vi-VN')} VNĐ
                         </div>
                         <div className="text-xs text-gray-500 mt-1" style={{ fontFamily: 'var(--font-body)' }}>
                             for {nights} nights

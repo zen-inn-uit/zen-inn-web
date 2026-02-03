@@ -70,7 +70,7 @@ export default function SearchPage() {
       const listing: Listing = {
         id: hotel.id,
         title: hotel.name,
-        slug: hotel.id, // Assuming ID as slug for now, or fetch slug if available
+        slug: hotel.slug || hotel.id, // Use slug from API, fallback to ID
         location: hotel.city,
         price: hotel.startingPrice || 0,
         rating: hotel.rating || 0,

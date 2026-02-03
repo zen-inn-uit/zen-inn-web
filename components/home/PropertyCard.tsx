@@ -72,17 +72,17 @@ export const PropertyCard = ({ listing, onMouseEnter, onMouseLeave, onClick }: P
         )}
       </div>
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-        <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#222222', margin: 0 }}>{listing.title}</h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', background: 'transparent' }}>
+        <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#222222', margin: 0, background: 'transparent' }}>{listing.title}</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent' }}>
           <Star size={12} fill="#222222" stroke="#222222" />
-          <span style={{ fontSize: '14px' }}>{listing.rating}</span>
+          <span style={{ fontSize: '14px', background: 'transparent' }}>{listing.rating}</span>
         </div>
       </div>
-      <p style={{ fontSize: '14px', color: '#717171', margin: '2px 0' }}>{listing.distance}</p>
-      <p style={{ fontSize: '14px', color: '#717171', margin: '2px 0' }}>{listing.date}</p>
-      <p style={{ fontSize: '15px', color: '#222222', margin: '6px 0 0 0', fontWeight: '600' }}>
-        {formatCurrency(listing.price)} <span style={{ fontWeight: '400' }}>night</span>
+      <p style={{ fontSize: '14px', color: '#717171', margin: '2px 0', background: 'transparent' }}>{listing.distance}</p>
+      <p style={{ fontSize: '14px', color: '#717171', margin: '2px 0', background: 'transparent' }}>{listing.date}</p>
+      <p style={{ fontSize: '15px', color: '#222222', margin: '6px 0 0 0', fontWeight: '600', background: 'transparent' }}>
+        {formatCurrency(listing.price)} <span style={{ fontWeight: '400', background: 'transparent' }}>night</span>
       </p>
     </div>
   );
