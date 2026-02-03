@@ -9,6 +9,7 @@ export interface BookingRoom {
   name: string;
   hotel: {
     id: string;
+    slug?: string;
     name: string;
     city: string;
     address: string;
@@ -60,6 +61,7 @@ export interface BookingsResponse {
 export interface WishlistItem {
   id: string;
   hotelId: string;
+  hotelSlug?: string;
   name: string;
   city: string;
   address: string;
@@ -136,4 +138,76 @@ export const customerAPI = {
       return false;
     }
   },
+
+  // ========== CREATE/RESERVE BOOKING ==========
+  /**
+   * Reserve a booking (instant confirmation, no payment)
+   */
+  reserveBooking: (data: ReserveBookingDto) => {
+    return axiosInstance.post<any, ReserveBookingResponse>('/bookings/reserve', data);
+  },
+
+  /**
+   * Create a new booking (legacy - with payment)
+   */
+  createBooking: (data: CreateBookingDto) => {
+    return axiosInstance.post<any, CreateBookingResponse>('/bookings', data);
+  },
+
+  /**
+   * Cancel a booking
+   */
+  cancelBooking: (bookingId: string, data: CancelBookingDto) => {
+    return axiosInstance.post<any, { booking: CustomerBooking; message: string }>(`/bookings/${bookingId}/cancel`, data);
+  },
 };
+
+// ==================== BOOKING CREATION TYPES ====================
+/**
+ * Reserve booking DTO (simplified - no payment method)
+ */
+export interface ReserveBookingDto {
+  roomId: string;
+  ratePlanId?: string;
+  checkIn: string; // ISO 8601 date string
+  checkOut: string; // ISO 8601 date string
+  guestName: string;
+  guestEmail: string;
+  guestPhone: string;
+  guestCount: number;
+  specialRequests?: string;
+}
+
+/**
+ * Reserve booking response (instant confirmation)
+ */
+export interface ReserveBookingResponse {
+  success: boolean;
+  booking: CustomerBooking;
+  message: string;
+}
+
+/**
+ * Create booking DTO (legacy - with payment method)
+ */
+export interface CreateBookingDto {
+  roomId: string;
+  ratePlanId?: string;
+  checkIn: string; // ISO 8601 date string
+  checkOut: string; // ISO 8601 date string
+  guestName: string;
+  guestEmail: string;
+  guestPhone: string;
+  guestCount: number;
+  paymentMethod: 'VNPAY' | 'SEPAY' | 'CASH' | 'CARD';
+  specialRequests?: string;
+}
+
+export interface CreateBookingResponse {
+  booking: CustomerBooking;
+  paymentUrl: string | null;
+}
+
+export interface CancelBookingDto {
+  cancellationReason?: string;
+}
