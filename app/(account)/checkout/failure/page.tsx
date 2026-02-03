@@ -3,7 +3,6 @@
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
-import Navbar from "@/components/ui/navbar";
 import ChatButton from "@/components/ui/chat-button";
 
 type FailureReason = "declined" | "insufficient_funds" | "cancelled" | "network" | "gateway" | "unknown";
@@ -58,10 +57,6 @@ export default function CheckoutFailurePage() {
 
     return (
         <div className="min-h-screen" style={{ backgroundColor: '#f5f5f0' }}>
-            <header>
-                <Navbar />
-            </header>
-
             <main className="max-w-2xl mx-auto px-4 md:px-6 py-16">
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 md:p-12 text-center">
                     {/* Status icon */}

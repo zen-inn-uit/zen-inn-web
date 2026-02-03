@@ -29,6 +29,10 @@ export default function CheckoutReviewSummaryCard({
     taxes,
     total
 }: CheckoutReviewSummaryCardProps) {
+    const formatVND = (amount: number) => {
+        return new Intl.NumberFormat('vi-VN').format(amount) + ' VNĐ';
+    };
+
     return (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sticky top-4">
             {/* Hotel info */}
@@ -75,22 +79,22 @@ export default function CheckoutReviewSummaryCard({
             {/* Price breakdown */}
             <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
                 <div className="flex justify-between text-sm" style={{ fontFamily: 'var(--font-body)', color: '#60463d' }}>
-                    <span>${pricePerNight.toFixed(0)} × {nights} nights</span>
-                    <span>${subtotal.toFixed(0)}</span>
+                    <span>{formatVND(pricePerNight)} × {nights} đêm</span>
+                    <span>{formatVND(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm" style={{ fontFamily: 'var(--font-body)', color: '#60463d' }}>
-                    <span>Taxes and fees</span>
-                    <span>${taxes.toFixed(0)}</span>
+                    <span>Thuế và phí</span>
+                    <span>{formatVND(taxes)}</span>
                 </div>
             </div>
 
             {/* Total */}
             <div className="flex justify-between items-baseline mb-6">
                 <span className="text-lg font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
-                    Total
+                    Tổng cộng
                 </span>
                 <span className="text-2xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
-                    ${total.toFixed(0)}
+                    {formatVND(total)}
                 </span>
             </div>
 

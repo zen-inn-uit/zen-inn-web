@@ -30,6 +30,10 @@ export default function CheckoutSummaryCard({
     taxes,
     total
 }: CheckoutSummaryCardProps) {
+    const formatVND = (amount: number) => {
+        return new Intl.NumberFormat('vi-VN').format(amount) + ' VNĐ';
+    };
+
     return (
         <div className="space-y-6">
             {/* Main summary card */}
@@ -78,22 +82,22 @@ export default function CheckoutSummaryCard({
                 {/* Price breakdown */}
                 <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
                     <div className="flex justify-between text-sm" style={{ fontFamily: 'var(--font-body)', color: '#60463d' }}>
-                        <span>${pricePerNight.toFixed(0)} × {nights} nights</span>
-                        <span>${subtotal.toFixed(0)}</span>
+                        <span>{formatVND(pricePerNight)} × {nights} đêm</span>
+                        <span>{formatVND(subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm" style={{ fontFamily: 'var(--font-body)', color: '#60463d' }}>
-                        <span>Taxes and fees</span>
-                        <span>${taxes.toFixed(0)}</span>
+                        <span>Thuế và phí</span>
+                        <span>{formatVND(taxes)}</span>
                     </div>
                 </div>
 
                 {/* Total */}
                 <div className="flex justify-between items-baseline mb-6">
                     <span className="text-lg font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
-                        Total
+                        Tổng cộng
                     </span>
                     <span className="text-2xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
-                        ${total.toFixed(0)}
+                        {formatVND(total)}
                     </span>
                 </div>
 
@@ -107,7 +111,7 @@ export default function CheckoutSummaryCard({
                 </Link>
 
                 <p className="text-xs text-center text-gray-500 mt-4" style={{ fontFamily: 'var(--font-body)' }}>
-                    You won't be charged yet
+                    Không cần thanh toán trước
                 </p>
             </div>
 

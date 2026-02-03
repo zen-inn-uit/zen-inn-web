@@ -1,32 +1,34 @@
 "use client";
 
-import { useState } from "react";
-import Navbar from "@/components/ui/navbar";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import ChatButton from "@/components/ui/chat-button";
 import CheckoutFormSection from "@/components/checkout/CheckoutFormSection";
 import CheckoutSummaryCard from "@/components/checkout/CheckoutSummaryCard";
-
-// Mock booking data
-const mockBooking = {
-    hotelName: "Zen Inn Luxury Resort",
-    hotelImage: "/auth-bg.png",
-    roomName: "Deluxe Room",
-    checkIn: "2024-12-15",
-    checkOut: "2024-12-18",
-    guests: "2 guests, 1 room",
-    pricePerNight: 125,
-    nights: 3,
-    subtotal: 375,
-    taxes: 45,
-    total: 420
-};
+import { useBooking } from "@/contexts/booking-context";
+import Link from "next/link";
 
 export default function CheckoutDetailsPage() {
+    const router = useRouter();
+    const { bookingDetails, updateBookingDetails } = useBooking();
+    
+    // Redirect if no booking details
+    useEffect(() => {
+        if (!bookingDetails) {
+            router.replace('/');
+        }
+    }, [bookingDetails, router]);
+
+    // Show loading while redirecting
+    if (!bookingDetails) {
+        return null;
+    }
+
     const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
+        firstName: bookingDetails.guestName?.split(' ')[0] || "",
+        lastName: bookingDetails.guestName?.split(' ').slice(1).join(' ') || "",
+        email: bookingDetails.guestEmail || "",
+        phone: bookingDetails.guestPhone || "",
         country: "",
         address: "",
         city: "",
@@ -34,7 +36,7 @@ export default function CheckoutDetailsPage() {
     });
 
     const [arrivalTime, setArrivalTime] = useState("15:00");
-    const [specialRequests, setSpecialRequests] = useState("");
+    const [specialRequests, setSpecialRequests] = useState(bookingDetails.specialRequests || "");
     const [addOns, setAddOns] = useState<string[]>([]);
     const [travelingForWork, setTravelingForWork] = useState(false);
 
@@ -51,6 +53,25 @@ export default function CheckoutDetailsPage() {
         );
     };
 
+    const handleContinue = () => {
+        // Validate required fields
+        if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.country) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        // Save guest details to booking context
+        updateBookingDetails({
+            guestName: `${formData.firstName} ${formData.lastName}`.trim(),
+            guestEmail: formData.email,
+            guestPhone: formData.phone,
+            specialRequests: specialRequests || undefined,
+        });
+
+        // Navigate to review page
+        router.push('/checkout/review');
+    };
+
     const addOnsList = [
         "Airport transfer",
         "Early check-in",
@@ -61,20 +82,16 @@ export default function CheckoutDetailsPage() {
 
     return (
         <div className="min-h-screen" style={{ backgroundColor: '#f5f5f0' }}>
-            <header>
-                <Navbar />
-            </header>
-
             <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
                 {/* Hotel summary header */}
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
                             <h1 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
-                                {mockBooking.hotelName}
+                                {bookingDetails.hotelName}
                             </h1>
                             <p className="text-sm text-gray-600" style={{ fontFamily: 'var(--font-body)' }}>
-                                {mockBooking.roomName} • {new Date(mockBooking.checkIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(mockBooking.checkOut).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                {bookingDetails.roomName} • {new Date(bookingDetails.checkIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(bookingDetails.checkOut).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                             </p>
                         </div>
                     </div>
@@ -296,22 +313,43 @@ export default function CheckoutDetailsPage() {
                                 </p>
                             </div>
                         </CheckoutFormSection>
+
+                        {/* Continue button */}
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                                <Link
+                                    href="/"
+                                    className="text-sm font-medium text-gray-600 hover:text-gray-900 underline"
+                                    style={{ fontFamily: 'var(--font-body)' }}
+                                >
+                                    Back to home
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={handleContinue}
+                                    className="w-full sm:w-auto px-8 py-3 rounded-lg font-bold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all"
+                                    style={{ fontFamily: 'var(--font-display)', backgroundColor: 'var(--color-primary)', fontSize: 'var(--fs-h5)', color: '#ffffff' }}
+                                >
+                                    Continue to review
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Right column - Summary card */}
                     <div className="w-full md:w-[320px] flex-shrink-0">
                         <CheckoutSummaryCard
-                            hotelName={mockBooking.hotelName}
-                            hotelImage={mockBooking.hotelImage}
-                            roomName={mockBooking.roomName}
-                            checkIn={mockBooking.checkIn}
-                            checkOut={mockBooking.checkOut}
-                            guests={mockBooking.guests}
-                            pricePerNight={mockBooking.pricePerNight}
-                            nights={mockBooking.nights}
-                            subtotal={mockBooking.subtotal}
-                            taxes={mockBooking.taxes}
-                            total={mockBooking.total}
+                            hotelName={bookingDetails.hotelName}
+                            hotelImage={bookingDetails.hotelImage}
+                            roomName={bookingDetails.roomName}
+                            checkIn={bookingDetails.checkIn}
+                            checkOut={bookingDetails.checkOut}
+                            guests={`${bookingDetails.guestCount} guests`}
+                            pricePerNight={bookingDetails.pricePerNight}
+                            nights={bookingDetails.nights}
+                            subtotal={bookingDetails.subtotal}
+                            taxes={bookingDetails.taxes}
+                            total={bookingDetails.total}
                         />
                     </div>
                 </div>
