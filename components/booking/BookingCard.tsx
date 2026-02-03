@@ -32,29 +32,36 @@ export default function BookingCard({ booking }: BookingCardProps) {
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("vi-VN", {
+      weekday: 'short',
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
     });
   };
 
+  const formatVND = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN').format(amount) + ' VNĐ';
+  };
+
   const hotel = booking.room?.hotel;
-  const thumbnailUrl = hotel?.thumbnailUrl || "/placeholder-hotel.jpg";
+  const thumbnailUrl = hotel?.thumbnailUrl || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80";
 
   return (
-    <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+    <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
       <div className="flex flex-col md:flex-row">
         {/* Hotel Image */}
-        <div className="relative w-full md:w-64 h-48 md:h-auto">
+        <div className="relative w-full md:w-72 h-48 md:h-auto flex-shrink-0">
           <Image
             src={thumbnailUrl}
             alt={hotel?.name || "Hotel"}
             fill
             className="object-cover"
+            sizes="(max-width: 768px) 100vw, 288px"
+            priority
           />
           <div className="absolute top-3 right-3">
             <span
-              className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-md ${
                 statusColors[booking.status]
               }`}
             >
@@ -64,49 +71,41 @@ export default function BookingCard({ booking }: BookingCardProps) {
         </div>
 
         {/* Booking Details */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-5">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h3 className="text-2xl font-display text-secondary mb-1">
+              <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
                 {hotel?.name || "Hotel"}
               </h3>
-              <p className="text-sm text-gray-600 flex items-center gap-1">
+              <p className="text-sm flex items-center gap-1" style={{ color: 'var(--color-primary)', opacity: 0.7 }}>
                 <svg
                   className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
                 >
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    fillRule="evenodd"
+                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    clipRule="evenodd"
                   />
                 </svg>
                 {hotel?.city || "N/A"}
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-accent">
-                {booking.totalPrice.toLocaleString("vi-VN")} {booking.currency || "VND"}
+            <div className="text-right p-3 rounded-lg" style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%)' }}>
+              <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                {formatVND(booking.totalPrice)}
               </p>
-              <p className="text-xs text-gray-500">Tổng giá</p>
+              <p className="text-xs text-white/90 font-medium">Tổng giá</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
             {/* Check-in */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+            <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(var(--color-primary-rgb), 0.08)' }}>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-primary)' }}>
                 <svg
-                  className="w-6 h-6 text-green-600"
+                  className="w-5 h-5 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -120,18 +119,18 @@ export default function BookingCard({ booking }: BookingCardProps) {
                 </svg>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Nhận phòng</p>
-                <p className="font-semibold text-secondary">
+                <p className="text-xs font-medium mb-0.5" style={{ fontFamily: 'var(--font-body)', color: 'var(--color-primary)', opacity: 0.6 }}>Nhận phòng</p>
+                <p className="font-semibold text-sm" style={{ fontFamily: 'var(--font-body)', color: 'var(--color-primary)' }}>
                   {formatDate(checkInDate)}
                 </p>
               </div>
             </div>
 
             {/* Check-out */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+            <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(var(--color-primary-rgb), 0.08)' }}>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-primary)' }}>
                 <svg
-                  className="w-6 h-6 text-red-600"
+                  className="w-5 h-5 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -145,18 +144,18 @@ export default function BookingCard({ booking }: BookingCardProps) {
                 </svg>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Trả phòng</p>
-                <p className="font-semibold text-secondary">
+                <p className="text-xs font-medium mb-0.5" style={{ fontFamily: 'var(--font-body)', color: 'var(--color-primary)', opacity: 0.6 }}>Trả phòng</p>
+                <p className="font-semibold text-sm" style={{ fontFamily: 'var(--font-body)', color: 'var(--color-primary)' }}>
                   {formatDate(checkOutDate)}
                 </p>
               </div>
             </div>
 
             {/* Nights & Guests */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+            <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(var(--color-primary-rgb), 0.08)' }}>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-primary)' }}>
                 <svg
-                  className="w-6 h-6 text-blue-600"
+                  className="w-5 h-5 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -170,10 +169,10 @@ export default function BookingCard({ booking }: BookingCardProps) {
                 </svg>
               </div>
               <div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs font-medium mb-0.5" style={{ fontFamily: 'var(--font-body)', color: 'var(--color-primary)', opacity: 0.6 }}>
                   {nights} đêm • {booking.guestCount} khách
                 </p>
-                <p className="font-semibold text-secondary">
+                <p className="font-semibold text-sm" style={{ fontFamily: 'var(--font-body)', color: 'var(--color-primary)' }}>
                   {booking.room?.name || "Phòng"}
                 </p>
               </div>
@@ -181,17 +180,23 @@ export default function BookingCard({ booking }: BookingCardProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-gray-100">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100">
             <Link
               href={`/bookings/${booking.id}`}
-              className="flex-1 text-center px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors font-medium"
+              className="flex-1 text-center px-5 py-2.5 text-white rounded-lg hover:opacity-90 transition-all font-semibold text-sm"
+              style={{ fontFamily: 'var(--font-display)', backgroundColor: 'var(--color-primary)' }}
             >
               Chi tiết đặt phòng
             </Link>
             {hotel && (
               <Link
-                href={`/hotels/${hotel.id}`}
-                className="flex-1 text-center px-4 py-2 border-2 border-accent text-accent rounded-lg hover:bg-accent/5 transition-colors font-medium"
+                href={`/hotels/${hotel.slug || hotel.id}`}
+                className="flex-1 text-center px-5 py-2.5 rounded-lg hover:opacity-90 transition-all font-semibold text-sm"
+                style={{ 
+                  fontFamily: 'var(--font-display)', 
+                  color: 'var(--color-primary)',
+                  backgroundColor: 'rgba(var(--color-primary-rgb), 0.1)'
+                }}
               >
                 Xem khách sạn
               </Link>

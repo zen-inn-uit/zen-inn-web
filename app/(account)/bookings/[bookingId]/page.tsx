@@ -122,6 +122,12 @@ export default function BookingDetailPage() {
     });
   };
 
+  const formatVND = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN').format(amount) + ' VNĐ';
+  };
+
+  const thumbnailUrl = hotel?.thumbnailUrl || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80";
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream-light via-white to-cream-light/50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -169,10 +175,12 @@ export default function BookingDetailPage() {
             <div className="flex flex-col md:flex-row">
               <div className="relative w-full md:w-80 h-64">
                 <Image
-                  src={hotel.thumbnailUrl || "/placeholder-hotel.jpg"}
+                  src={thumbnailUrl}
                   alt={hotel.name}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 320px"
+                  priority
                 />
               </div>
               <div className="p-6 flex-1">
@@ -202,7 +210,7 @@ export default function BookingDetailPage() {
                   {hotel.address}, {hotel.city}
                 </p>
                 <Link
-                  href={`/hotels/${hotel.id}`}
+                  href={`/hotels/${hotel.slug || hotel.id}`}
                   className="inline-block px-6 py-2 border-2 border-accent text-accent rounded-lg hover:bg-accent/5 transition-colors font-medium"
                 >
                   Xem thông tin khách sạn
@@ -325,19 +333,19 @@ export default function BookingDetailPage() {
             Thông tin thanh toán
           </h3>
           <div className="space-y-3">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center py-2">
               <span className="text-gray-600">Giá phòng ({nights} đêm)</span>
-              <span className="font-semibold">
-                {booking.totalPrice.toLocaleString("vi-VN")} {booking.currency || "VND"}
+              <span className="font-semibold" style={{ fontFamily: 'var(--font-body)', color: 'var(--color-primary)' }}>
+                {formatVND(booking.totalPrice)}
               </span>
             </div>
-            <div className="pt-3 border-t-2 border-gray-200">
+            <div className="pt-3 border-t-2" style={{ borderColor: 'var(--color-primary)' }}>
               <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold text-secondary">
+                <span className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
                   Tổng cộng
                 </span>
-                <span className="text-2xl font-bold text-accent">
-                  {booking.totalPrice.toLocaleString("vi-VN")} {booking.currency || "VND"}
+                <span className="text-3xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-primary)' }}>
+                  {formatVND(booking.totalPrice)}
                 </span>
               </div>
             </div>
