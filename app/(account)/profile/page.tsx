@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/ui/navbar";
 import ChatButton from "@/components/ui/chat-button";
 import ProfileHeader from "@/components/account/ProfileHeader";
 import ProfileSidebar, { ProfileTab } from "@/components/account/ProfileSidebar";
@@ -80,10 +79,6 @@ export default function ProfilePage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <header className="sticky top-0 z-50 bg-white shadow-sm">
-                <Navbar showSearch={false} />
-            </header>
-
             <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 animate-fade-in">
                 {/* Header with animation */}
                 <div className="animate-fade-in-down">
