@@ -1,9 +1,11 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/auth-context";
+import { chatApi } from "@/lib/chat.api";
 import Navbar from "@/components/ui/navbar";
-import ChatButton from "@/components/ui/chat-button";
+import { ChatWindow } from "@/components/chat/ChatWindow";
 import MiniMap from "@/components/search/MiniMap";
 import Breadcrumbs from "@/components/hotel/Breadcrumbs";
 import WishlistButton from "@/components/hotel/WishlistButton";
@@ -13,11 +15,14 @@ import HotelPolicies from "@/components/hotel/HotelPolicies";
 import HotelReviews from "@/components/hotel/HotelReviews";
 import { ImageViewer } from "@/components/ui/image-viewer";
 import { hotelApi, HotelDetailResponse } from "@/lib/api/hotel-api";
+import { MessageCircle } from "lucide-react";
 
 export default function HotelDetailPage() {
     const params = useParams();
     const searchParams = useSearchParams();
-    const hotelId = params.hotelId as string;
+    const router = useRouter();
+    const { user } = useAuth();
+    const slug = params.slug as string;
     
     const [hotelData, setHotelData] = useState<HotelDetailResponse | null>(null);
     const [loading, setLoading] = useState(true);
@@ -25,6 +30,8 @@ export default function HotelDetailPage() {
     const [showAllPhotos, setShowAllPhotos] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedRoomIndex, setSelectedRoomIndex] = useState(0);
+    const [isChatOpen, setChatOpen] = useState(false);
+    const [isCreatingConversation, setIsCreatingConversation] = useState(false);
 
     useEffect(() => {
         const fetchHotelDetail = async () => {
@@ -35,7 +42,7 @@ export default function HotelDetailPage() {
                 const adults = searchParams.get('adults') ? parseInt(searchParams.get('adults')!) : undefined;
                 const rooms = searchParams.get('rooms') ? parseInt(searchParams.get('rooms')!) : undefined;
 
-                const data = await hotelApi.getHotelDetail(hotelId, {
+                const data = await hotelApi.getHotelDetail(slug, {
                     checkIn,
                     checkOut,
                     adults,
@@ -51,7 +58,7 @@ export default function HotelDetailPage() {
         };
 
         fetchHotelDetail();
-    }, [hotelId, searchParams]);
+    }, [slug, searchParams]);
 
     const handleSelectRoom = (roomIndex: number) => {
         setSelectedRoomIndex(roomIndex);
@@ -60,6 +67,37 @@ export default function HotelDetailPage() {
     const handleImageClick = (index: number) => {
         setCurrentImageIndex(index);
         setShowAllPhotos(true);
+    };
+
+    const handleMessageClick = async () => {
+        if (!user) {
+            // Redirect to login if not authenticated
+            router.push('/login');
+            return;
+        }
+
+        if (!hotelData) return;
+
+        setIsCreatingConversation(true);
+        
+        try {
+            // Create or get conversation
+            const conversation = await chatApi.startConversation(hotelData.hotel.id);
+            const convData = Array.isArray(conversation) ? conversation[0] : conversation;
+            const conversationId = convData?.id || (convData as any)?.data?.id;
+            
+            if (conversationId) {
+                // Navigate to messenger with this conversation
+                router.push(`/messages/${conversationId}`);
+            } else {
+                throw new Error('Không thể lấy ID cuộc trò chuyện');
+            }
+        } catch (err) {
+            console.error('Failed to start conversation:', err);
+            alert('Không thể bắt đầu cuộc trò chuyện. Vui lòng thử lại.');
+            setIsCreatingConversation(false);
+        }
+        // Don't set to false here - let the navigation happen with loading state
     };
 
     if (loading) {
@@ -100,6 +138,7 @@ export default function HotelDetailPage() {
 
     // Transform rooms for components that expect the old format
     const transformedRooms = hotelRooms.map(room => ({
+        id: room.roomId,
         name: room.roomName,
         bedInfo: room.bedInfo || 'N/A',
         capacity: `${room.maxGuests} guests`,
@@ -188,7 +227,21 @@ export default function HotelDetailPage() {
                                         📍 {hotel.address}, {hotel.city} - <span className="underline cursor-pointer hover:text-[#0057B8] transition-colors">Show on map</span>
                                     </p>
                                 </div>
-                                <WishlistButton />
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handleMessageClick}
+                                        disabled={isCreatingConversation}
+                                        className="w-14 h-14 rounded-full border border-gray-300 bg-white flex items-center justify-center hover:border-primary hover:bg-primary/5 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-[#60463d] disabled:opacity-50 disabled:cursor-not-allowed relative"
+                                        title={isCreatingConversation ? "Đang tạo cuộc trò chuyện..." : "Nhắn tin cho khách sạn"}
+                                    >
+                                        {isCreatingConversation ? (
+                                            <div className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-[#6B5B3D] border-t-transparent"></div>
+                                        ) : (
+                                            <MessageCircle className="w-7 h-7" />
+                                        )}
+                                    </button>
+                                    <WishlistButton />
+                                </div>
                             </div>
 
                             {/* Description */}
@@ -255,6 +308,11 @@ export default function HotelDetailPage() {
                         <div className="hidden lg:block w-[380px] flex-shrink-0">
                             <div className="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
                                 <BookingSummaryCard
+                                    hotelId={hotel.id}
+                                    hotelName={hotel.name}
+                                    hotelImage={hotel.images[0]}
+                                    hotelCity={hotel.city}
+                                    hotelAddress={hotel.address}
                                     rooms={transformedRooms}
                                     nights={3}
                                     checkIn={searchParams.get('checkIn') || ''}
@@ -280,8 +338,10 @@ export default function HotelDetailPage() {
                 </div>
             </footer>
 
-            {/* Floating chat button */}
-            <ChatButton />
+            {/* Floating chat window */}
+            <div className="fixed bottom-4 right-4 z-50">
+                <ChatWindow hotelId={hotel.id} hotelName={hotel.name} />
+            </div>
 
             {/* Image Viewer Modal */}
             <ImageViewer

@@ -2,6 +2,7 @@ import axiosInstance from './axios';
 
 export interface HotelSearchItem {
   id: string;
+  slug?: string;
   name: string;
   city: string;
   address: string;
@@ -50,6 +51,7 @@ export interface RoomDetail {
 
 export interface HotelInfo {
   id: string;
+  slug?: string;
   name: string;
   description: string | null;
   city: string;
