@@ -36,9 +36,9 @@ export default function AIPlannerPage() {
           <div className="max-w-6xl mx-auto">
             <header className="mb-10 flex flex-col md:flex-row justify-between items-end gap-6">
               <div>
-                <h1 className="text-4xl font-bold text-slate-900 mb-2">AI Trip Planner</h1>
+                <h1 className="text-4xl font-bold text-slate-900 mb-2">AI Lên Kế Hoạch Chuyến Đi</h1>
                 <p className="text-slate-500 text-lg">
-                  Your dream trip, planned in seconds. Just tell us your vibe.
+                  Chuyến đi mơ ước của bạn, được lên kế hoạch trong vài giây. Chỉ cần cho tôi biết ý tưởng của bạn.
                 </p>
               </div>
               {!generatedTrip && (
@@ -47,7 +47,7 @@ export default function AIPlannerPage() {
                   className="px-6 py-3 border border-slate-200 rounded-2xl text-slate-600 font-semibold hover:bg-slate-50 transition-all flex items-center gap-2"
                 >
                   <Sparkles size={18} className="text-[#6B5B3D]" />
-                  Try a Sample Trip
+                  Xem chuyến đi mẫu
                 </button>
               )}
             </header>
@@ -79,11 +79,11 @@ export default function AIPlannerPage() {
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="m15 18-6-6 6-6"/>
                       </svg>
-                      Back to Planner
+                      Quay lại trang lên kế hoạch
                     </button>
                     <div className="flex gap-3">
-                      <button className="px-4 py-2 border rounded-full hover:bg-slate-50 transition-colors">Share</button>
-                      <button className="px-4 py-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors">Save Itinerary</button>
+                      <button className="px-4 py-2 border rounded-full hover:bg-slate-50 transition-colors">Chia sẻ</button>
+                      <button className="px-4 py-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors">Lưu lịch trình</button>
                     </div>
                   </div>
                   <ItineraryView trip={generatedTrip} />
@@ -97,8 +97,7 @@ export default function AIPlannerPage() {
                   <div className="absolute inset-0 border-4 border-rose-100 rounded-full"></div>
                   <div className="absolute inset-0 border-4 border-rose-500 rounded-full border-t-transparent animate-spin"></div>
                 </div>
-                <h3 className="mt-6 text-xl font-semibold text-slate-800">Generating your dream trip...</h3>
-                <p className="text-slate-500 mt-2">Personalizing itineraries with Llama 3.3 70B</p>
+                <h3 className="mt-6 text-xl font-semibold text-slate-800">Đang tạo chuyến đi mơ ước của bạn...</h3>
               </div>
             )}
           </div>
